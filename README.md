@@ -1,14 +1,31 @@
-# ferman
+<p align="center">
+  <img src="./assets/logo.svg" alt="ferman logo" width="132" height="132" />
+</p>
 
-Inspect and free busy ports instantly.
+<h1 align="center">ferman</h1>
 
-The hands of AI.
+<p align="center">
+  <a href="https://www.npmjs.com/package/ferman"><img src="https://img.shields.io/npm/v/ferman.svg" alt="npm version" /></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/npm/l/ferman.svg" alt="license" /></a>
+  <a href="https://borakilicoglu.github.io/ferman/"><img src="https://img.shields.io/badge/docs-github_pages-0b6b57" alt="docs" /></a>
+  <a href="https://www.npmjs.com/package/ferman"><img src="https://img.shields.io/node/v/ferman.svg" alt="node version" /></a>
+</p>
 
-```bash
-npx ferman 3000
-```
+<p align="center">
+  Inspect ports, identify processes, and free busy ports with predictable CLI output.
+</p>
 
-`ferman` is a small DevOps CLI for checking which process is using a port and freeing it safely when needed. It is designed to work well for humans and AI agents with predictable JSON output and exit codes.
+<p align="center">
+  <strong>The hands of AI.</strong>
+</p>
+
+<p align="center">
+  <code>npx ferman 3000</code>
+</p>
+
+## Overview
+
+`ferman` is a small cross-platform DevOps CLI for identifying which process is using a port and releasing it safely when needed. It is designed for both humans and AI agents, with machine-readable JSON output and predictable exit codes.
 
 ## Install
 
@@ -31,30 +48,33 @@ Install locally for development:
 npm install
 ```
 
-## Usage
+## Tools
 
-```bash
-ferman <port> [--force] [--dry] [--json]
-```
-
-Examples:
+Core commands:
 
 ```bash
 ferman 3000
-ferman 3000 --force
-ferman 3000 --dry
-ferman 3000 --json
 ```
 
-## JSON Mode
+Force mode:
 
-Use `--json` for scripts, CI, and AI agents:
+```bash
+ferman 3000 --force
+```
+
+Dry mode:
+
+```bash
+ferman 3000 --dry
+```
+
+JSON mode:
 
 ```bash
 ferman 3000 --json
 ```
 
-Example output:
+Example JSON output:
 
 ```json
 {
@@ -67,7 +87,7 @@ Example output:
     }
   ],
   "action": "killed",
-  "message": "Ferman verildi."
+  "message": "Port released."
 }
 ```
 
@@ -77,32 +97,40 @@ Exit codes:
 - `1`: runtime error
 - `2`: invalid input
 
-## Why
+Platform support:
 
-Busy ports are a small problem that interrupts real work. `ferman` keeps the fix simple: inspect the port, show the process, and free it when you decide to proceed.
+- macOS and Linux: `lsof`, `ps`
+- Windows: `netstat`, `tasklist`, `taskkill`
 
-## Local Development
-
-Run in development mode:
-
-```bash
-npm run dev -- 3000 --dry
-```
-
-Build:
+Local tooling:
 
 ```bash
-npm run build
-```
-
-Type-check:
-
-```bash
+npm run lint
+npm test
 npm run typecheck
+npm run build
+npm run smoke
+npm run release:check
 ```
 
-## Platform Notes
+## Sponsor
 
-- macOS and Linux use `lsof` and `ps`
-- Windows uses `netstat`, `tasklist`, and `taskkill`
-- If a required system command is missing, `ferman` exits with an error
+If `ferman` helps you keep local development moving, you can support ongoing maintenance through GitHub Sponsors:
+
+- https://github.com/sponsors/borakilicoglu
+
+## Support
+
+For bugs, regressions, and feature requests, use GitHub Issues:
+
+- https://github.com/borakilicoglu/ferman/issues
+
+## Resources
+
+- Website: https://borakilicoglu.github.io/ferman/
+- GitHub repo: https://github.com/borakilicoglu/ferman
+- Official npm package: https://www.npmjs.com/package/ferman
+- Docs: https://borakilicoglu.github.io/ferman/
+- Contributing: https://github.com/borakilicoglu/ferman/blob/main/CONTRIBUTING.md
+- Releases: https://github.com/borakilicoglu/ferman/releases
+- License: https://github.com/borakilicoglu/ferman/blob/main/LICENSE

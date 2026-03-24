@@ -1,4 +1,4 @@
-import { ProcessInfo } from "../types";
+import type { ProcessInfo } from "../types";
 import { runCommand } from "../utils/process";
 
 export async function resolveUnixProcessName(pid: number): Promise<string | undefined> {

@@ -1,6 +1,6 @@
 import { getPortProvider } from "./platform";
+import type { CommandResult, CliOptions } from "./types";
 import { confirmKill } from "./utils/confirm";
-import { CommandResult, CliOptions } from "./types";
 
 export async function runFerman(options: CliOptions): Promise<CommandResult> {
   const provider = getPortProvider();
@@ -10,7 +10,7 @@ export async function runFerman(options: CliOptions): Promise<CommandResult> {
     return {
       ...inspection,
       action: "none",
-      message: "Port zaten bos."
+      message: "Port is already free."
     };
   }
 
@@ -18,7 +18,7 @@ export async function runFerman(options: CliOptions): Promise<CommandResult> {
     return {
       ...inspection,
       action: "inspected",
-      message: "Dry mod aktif. Hicbir surec sonlandirilmadi."
+      message: "Dry mode active. No processes were terminated."
     };
   }
 
@@ -28,7 +28,7 @@ export async function runFerman(options: CliOptions): Promise<CommandResult> {
     return {
       ...inspection,
       action: "inspected",
-      message: "Islem iptal edildi."
+      message: "Operation cancelled."
     };
   }
 
@@ -37,6 +37,6 @@ export async function runFerman(options: CliOptions): Promise<CommandResult> {
   return {
     ...inspection,
     action: "killed",
-    message: "Ferman verildi."
+    message: "Port released."
   };
 }

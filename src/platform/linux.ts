@@ -1,9 +1,10 @@
-import { InspectPortProvider, PortInspectionResult, ProcessInfo } from "../types";
+import type { InspectPortProvider, PortInspectionResult, ProcessInfo } from "../types";
 import { runCommand } from "../utils/process";
+import { parseLsofPidOutput } from "./darwin";
 import { killWithSignal, resolveUnixProcessName } from "./shared";
 
 async function inspectWithLsof(port: number): Promise<ProcessInfo[]> {
-  const result = await runCommand("lsof", ["-nP", "-iTCP:" + String(port), "-sTCP:LISTEN", "-t"]);
+  const result = await runCommand("lsof", ["-nP", `-iTCP:${String(port)}`, "-sTCP:LISTEN", "-t"]);
 
   if (result.code !== 0 && !result.stdout.trim()) {
     if (/not found/i.test(result.stderr)) {
@@ -13,16 +14,7 @@ async function inspectWithLsof(port: number): Promise<ProcessInfo[]> {
     return [];
   }
 
-  const pids = Array.from(
-    new Set(
-      result.stdout
-        .split(/\r?\n/)
-        .map((line) => line.trim())
-        .filter(Boolean)
-        .map((line) => Number(line))
-        .filter((value) => Number.isInteger(value) && value > 0)
-    )
-  );
+  const pids = parseLsofPidOutput(result.stdout);
 
   const processes = await Promise.all(
     pids.map(async (pid) => ({

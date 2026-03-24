@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { ProcessInfo } from "../src/types";
+import type { ProcessInfo } from "../src/types";
 
 const inspectPort = vi.fn();
 const killProcesses = vi.fn();
@@ -43,7 +43,7 @@ describe("runFerman", () => {
       busy: false,
       processes: [],
       action: "none",
-      message: "Port zaten bos."
+      message: "Port is already free."
     });
     expect(killProcesses).not.toHaveBeenCalled();
     expect(confirmKill).not.toHaveBeenCalled();
@@ -71,7 +71,7 @@ describe("runFerman", () => {
       busy: true,
       processes,
       action: "inspected",
-      message: "Dry mod aktif. Hicbir surec sonlandirilmadi."
+      message: "Dry mode active. No processes were terminated."
     });
     expect(killProcesses).not.toHaveBeenCalled();
     expect(confirmKill).not.toHaveBeenCalled();
@@ -102,7 +102,7 @@ describe("runFerman", () => {
       busy: true,
       processes,
       action: "killed",
-      message: "Ferman verildi."
+      message: "Port released."
     });
   });
 
@@ -131,7 +131,7 @@ describe("runFerman", () => {
       busy: true,
       processes,
       action: "inspected",
-      message: "Islem iptal edildi."
+      message: "Operation cancelled."
     });
   });
 });

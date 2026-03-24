@@ -1,5 +1,5 @@
 import { runFerman } from "./index";
-import { CliOptions } from "./types";
+import type { CliOptions } from "./types";
 import { printError, printHumanResult, printJsonResult } from "./utils/output";
 import { parsePort } from "./utils/validatePort";
 

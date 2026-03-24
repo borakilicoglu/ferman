@@ -1,14 +1,14 @@
-import { CommandResult } from "../types";
+import type { CommandResult } from "../types";
 
 export function printHumanResult(result: CommandResult): void {
-  console.log("Ferman bakiyor...");
+  console.log("Inspecting port...");
 
   if (!result.busy) {
-    console.log("Port zaten bos.");
+    console.log("Port is already free.");
     return;
   }
 
-  console.log("Bu portu kullanan surec bulundu.");
+  console.log("Found process using this port.");
 
   for (const process of result.processes) {
     const label = process.name ? `${process.name} (${process.pid})` : `PID ${process.pid}`;
@@ -16,12 +16,12 @@ export function printHumanResult(result: CommandResult): void {
   }
 
   if (result.action === "killed") {
-    console.log("Ferman verildi.");
+    console.log("Port released.");
     return;
   }
 
   if (result.action === "inspected") {
-    console.log("Dry mod aktif. Hicbir surec sonlandirilmadi.");
+    console.log(result.message);
   }
 }
 

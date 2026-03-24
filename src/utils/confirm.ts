@@ -11,7 +11,7 @@ export async function confirmKill(port: number): Promise<boolean> {
   });
 
   const answer = await new Promise<string>((resolve) => {
-    rl.question(`Port ${port} uzerindeki surecleri sonlandirilsin mi? [y/N] `, resolve);
+    rl.question(`Terminate processes using port ${port}? [y/N] `, resolve);
   });
 
   rl.close();

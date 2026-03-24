@@ -1,4 +1,4 @@
-import { InspectPortProvider } from "../types";
+import type { InspectPortProvider } from "../types";
 import { DarwinPortProvider } from "./darwin";
 import { LinuxPortProvider } from "./linux";
 import { WindowsPortProvider } from "./windows";

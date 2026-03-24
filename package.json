@@ -7,7 +7,9 @@
     "devops",
     "ports",
     "process",
-    "node"
+    "node",
+    "ai",
+    "llm"
   ],
   "homepage": "https://github.com/borakilicoglu/ferman#readme",
   "repository": {
@@ -33,20 +35,31 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "tsx src/cli.ts",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "husky",
     "prepublishOnly": "npm run test && npm run build",
+    "release:check": "npm run lint && npm run test && npm run typecheck && npm run build && npm run smoke && npm_config_cache=.npm-cache npm pack --dry-run --ignore-scripts",
     "smoke": "npm run build && node dist/cli.js --help && node dist/cli.js 65535 --dry --json",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "lint": "echo 'No lint step configured yet.'"
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "engines": {
     "node": ">=18"
   },
   "devDependencies": {
+    "@eslint/js": "^9.23.0",
     "@types/node": "^24.0.0",
+    "eslint": "^9.23.0",
+    "globals": "^16.0.0",
+    "husky": "^9.1.7",
+    "prettier": "^3.5.3",
     "tsx": "^4.20.0",
     "typescript": "^5.8.3",
+    "typescript-eslint": "^8.28.0",
     "vitest": "^3.2.4"
   }
 }

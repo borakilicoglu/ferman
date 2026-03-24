@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project follows Semantic Versioning.
 
+## [0.1.1] - 2026-03-24
+
+### Added
+
+- ESLint, Prettier, Husky, and contributor guidance for a stronger local workflow
+- `smoke` and `release:check` scripts for release validation
+- Parser-level tests for Unix and Windows port detection
+- Initial SVG brand asset for README and docs use
+
+### Changed
+
+- Updated README structure with badges, support links, and cleaner project sections
+- Standardized user-facing CLI messages in English
+- Improved release tooling around packaging and local npm cache handling
+
 ## [0.1.0] - 2026-03-24
 
 ### Added

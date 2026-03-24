@@ -1,4 +1,4 @@
-import { InspectPortProvider, PortInspectionResult, ProcessInfo } from "../types";
+import type { InspectPortProvider, PortInspectionResult, ProcessInfo } from "../types";
 import { runCommand } from "../utils/process";
 
 async function resolveWindowsProcessName(pid: number): Promise<string | undefined> {
@@ -17,7 +17,7 @@ async function resolveWindowsProcessName(pid: number): Promise<string | undefine
   return match?.[1];
 }
 
-function parseNetstatLine(line: string): number | undefined {
+export function parseNetstatLine(line: string): number | undefined {
   const parts = line.trim().split(/\s+/);
   if (parts.length < 5) {
     return undefined;
@@ -25,6 +25,18 @@ function parseNetstatLine(line: string): number | undefined {
 
   const pid = Number(parts[parts.length - 1]);
   return Number.isInteger(pid) && pid > 0 ? pid : undefined;
+}
+
+export function findListeningPids(output: string, port: number): number[] {
+  return Array.from(
+    new Set(
+      output
+        .split(/\r?\n/)
+        .filter((line) => line.includes(`:${port}`) && /LISTENING/i.test(line))
+        .map(parseNetstatLine)
+        .filter((value): value is number => typeof value === "number")
+    )
+  );
 }
 
 export class WindowsPortProvider implements InspectPortProvider {
@@ -39,15 +51,7 @@ export class WindowsPortProvider implements InspectPortProvider {
       throw new Error(result.stderr.trim() || "Failed to inspect port.");
     }
 
-    const pids = Array.from(
-      new Set(
-        result.stdout
-          .split(/\r?\n/)
-          .filter((line) => line.includes(`:${port}`) && /LISTENING/i.test(line))
-          .map(parseNetstatLine)
-          .filter((value): value is number => typeof value === "number")
-      )
-    );
+    const pids = findListeningPids(result.stdout, port);
 
     const processes = await Promise.all(
       pids.map(async (pid) => ({
