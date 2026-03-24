@@ -1,0 +1,52 @@
+{
+  "name": "ferman",
+  "version": "0.1.0",
+  "description": "Inspect ports, identify processes, and free busy ports with predictable CLI output.",
+  "keywords": [
+    "cli",
+    "devops",
+    "ports",
+    "process",
+    "node"
+  ],
+  "homepage": "https://github.com/borakilicoglu/ferman#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/borakilicoglu/ferman.git"
+  },
+  "bugs": {
+    "url": "https://github.com/borakilicoglu/ferman/issues"
+  },
+  "license": "MIT",
+  "author": "Bora Kilicoglu",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "bin": {
+    "ferman": "bin/ferman.js"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx src/cli.ts",
+    "prepublishOnly": "npm run test && npm run build",
+    "smoke": "npm run build && node dist/cli.js --help && node dist/cli.js 65535 --dry --json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "echo 'No lint step configured yet.'"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}
