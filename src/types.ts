@@ -26,4 +26,5 @@ export interface CliOptions {
   force: boolean;
   dry: boolean;
   json: boolean;
+  toon: boolean;
 }

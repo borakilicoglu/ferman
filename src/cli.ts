@@ -1,6 +1,6 @@
 import { runFerman } from "./index";
 import type { CliOptions } from "./types";
-import { printError, printHumanResult, printJsonResult } from "./utils/output";
+import { printError, printHumanResult, printJsonResult, printToonResult } from "./utils/output";
 import { parsePort } from "./utils/validatePort";
 
 function printHelp(): void {
@@ -9,12 +9,13 @@ function printHelp(): void {
 Inspect and free busy ports instantly.
 
 Usage:
-  ferman <port> [--force] [--dry] [--json]
+  ferman <port> [--force] [--dry] [--json | --toon]
 
 Options:
   --force   Kill without confirmation
   --dry     Inspect only, do not kill
   --json    Print machine-readable JSON
+  --toon    Print machine-readable TOON
   --help    Show help
 `);
 }
@@ -23,6 +24,7 @@ function parseArgs(argv: string[]): CliOptions {
   const force = argv.includes("--force");
   const dry = argv.includes("--dry");
   const json = argv.includes("--json");
+  const toon = argv.includes("--toon");
   const help = argv.includes("--help") || argv.includes("-h");
 
   if (help) {
@@ -36,11 +38,16 @@ function parseArgs(argv: string[]): CliOptions {
     throw new Error("Exactly one port argument is required.");
   }
 
+  if (json && toon) {
+    throw new Error("Choose either --json or --toon, not both.");
+  }
+
   return {
     port: parsePort(positional[0]),
     force,
     dry,
-    json
+    json,
+    toon
   };
 }
 
@@ -51,7 +58,11 @@ async function main(): Promise<void> {
     options = parseArgs(process.argv.slice(2));
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    printError(message, process.argv.includes("--json"));
+    await printError(
+      message,
+      process.argv.includes("--json"),
+      process.argv.includes("--toon")
+    );
     process.exit(2);
     return;
   }
@@ -61,6 +72,8 @@ async function main(): Promise<void> {
 
     if (options.json) {
       printJsonResult(result);
+    } else if (options.toon) {
+      await printToonResult(result);
     } else {
       printHumanResult(result);
     }
@@ -68,7 +81,7 @@ async function main(): Promise<void> {
     process.exit(0);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    printError(message, options.json);
+    await printError(message, options.json, options.toon);
     process.exit(1);
   }
 }

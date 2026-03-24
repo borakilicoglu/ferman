@@ -2,6 +2,9 @@ node_modules
 dist
 coverage
 .npm-cache
+docs/.vitepress/cache
+docs/.vitepress/dist
+docs/.vitepress/.temp
 .DS_Store
 *.log
 npm-debug.log*

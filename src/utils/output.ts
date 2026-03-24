@@ -29,9 +29,20 @@ export function printJsonResult(result: CommandResult): void {
   console.log(JSON.stringify(result, null, 2));
 }
 
-export function printError(message: string, json: boolean): void {
+export async function printToonResult(result: CommandResult | { error: string }): Promise<void> {
+  const { encode } = await import("@toon-format/toon");
+  console.log(encode(result));
+}
+
+export async function printError(message: string, json: boolean, toon: boolean): Promise<void> {
   if (json) {
     console.error(JSON.stringify({ error: message }, null, 2));
+    return;
+  }
+
+  if (toon) {
+    const { encode } = await import("@toon-format/toon");
+    console.error(encode({ error: message }));
     return;
   }
 
