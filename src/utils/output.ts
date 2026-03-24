@@ -1,6 +1,6 @@
-import type { CommandResult } from "../types";
+import type { BatchCommandResult, CommandResult, ErrorResult, WatchEvent } from "../types";
 
-export function printHumanResult(result: CommandResult): void {
+function printSingleHumanResult(result: CommandResult): void {
   console.log("Inspecting port...");
 
   if (!result.busy) {
@@ -25,26 +25,63 @@ export function printHumanResult(result: CommandResult): void {
   }
 }
 
-export function printJsonResult(result: CommandResult): void {
+export function printHumanResult(result: CommandResult | BatchCommandResult): void {
+  if ("ports" in result) {
+    for (const [index, item] of result.ports.entries()) {
+      if (index > 0) {
+        console.log("");
+      }
+
+      console.log(`Port ${item.port}`);
+      printSingleHumanResult(item);
+    }
+
+    return;
+  }
+
+  printSingleHumanResult(result);
+}
+
+export function printJsonResult(result: CommandResult | BatchCommandResult): void {
   console.log(JSON.stringify(result, null, 2));
 }
 
-export async function printToonResult(result: CommandResult | { error: string }): Promise<void> {
+export async function printToonResult(
+  result: CommandResult | BatchCommandResult | ErrorResult
+): Promise<void> {
   const { encode } = await import("@toon-format/toon");
   console.log(encode(result));
 }
 
-export async function printError(message: string, json: boolean, toon: boolean): Promise<void> {
+export function printWatchEventHuman(event: WatchEvent): void {
+  console.log(`[${event.timestamp}] snapshot #${event.iteration}`);
+  printHumanResult(event.result);
+}
+
+export function printWatchEventJson(event: WatchEvent): void {
+  console.log(JSON.stringify(event));
+}
+
+export async function printWatchEventToon(event: WatchEvent): Promise<void> {
+  const { encode } = await import("@toon-format/toon");
+  console.log(encode(event));
+}
+
+export async function printError(
+  result: ErrorResult,
+  json: boolean,
+  toon: boolean
+): Promise<void> {
   if (json) {
-    console.error(JSON.stringify({ error: message }, null, 2));
+    console.error(JSON.stringify(result, null, 2));
     return;
   }
 
   if (toon) {
     const { encode } = await import("@toon-format/toon");
-    console.error(encode({ error: message }));
+    console.error(encode(result));
     return;
   }
 
-  console.error(message);
+  console.error(result.message);
 }

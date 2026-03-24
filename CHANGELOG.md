@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project follows Semantic Versioning.
 
+## [0.1.2] - 2026-03-24
+
+### Added
+
+- Strong JSON contract with stable success and error shapes
+- Stable machine-readable error codes
+- Multi-port support with batch result summaries
+- `--common` for common local development port scans
+- `--plan` for non-destructive action recommendations
+- `--doctor` for environment-level diagnosis
+- `--json-schema` for structured output consumers
+- `--watch` for repeated snapshot events
+- Expanded README and VitePress docs to cover the AI-facing surface
+
+### Changed
+
+- Improved CLI machine output with recommendation and diagnosis layers
+- Reworked docs structure around outputs and development workflows
+
 ## [0.1.1] - 2026-03-24
 
 ### Added

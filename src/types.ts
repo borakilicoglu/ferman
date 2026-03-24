@@ -1,4 +1,5 @@
 export type ActionResult = "none" | "inspected" | "killed";
+import type { ErrorCode, SuccessCode } from "./utils/errors";
 
 export interface ProcessInfo {
   pid: number;
@@ -12,8 +13,46 @@ export interface PortInspectionResult {
 }
 
 export interface CommandResult extends PortInspectionResult {
+  ok: true;
+  code: SuccessCode;
   action: ActionResult;
   message: string;
+  recommendation?: {
+    action: "none" | "inspect" | "terminate";
+    reason: string;
+    risk: "low" | "medium";
+  };
+}
+
+export interface BatchCommandResult {
+  ok: true;
+  code: "BATCH_COMPLETED";
+  ports: CommandResult[];
+  summary: {
+    total: number;
+    busy: number;
+    free: number;
+    released: number;
+    inspected: number;
+  };
+  diagnosis?: {
+    status: "healthy" | "attention";
+    message: string;
+    recommendations: string[];
+  };
+}
+
+export interface ErrorResult {
+  ok: false;
+  code: ErrorCode;
+  message: string;
+}
+
+export interface WatchEvent {
+  event: "snapshot";
+  iteration: number;
+  timestamp: string;
+  result: CommandResult | BatchCommandResult;
 }
 
 export interface InspectPortProvider {
@@ -22,9 +61,14 @@ export interface InspectPortProvider {
 }
 
 export interface CliOptions {
-  port: number;
+  ports: number[];
+  common: boolean;
+  doctor: boolean;
+  jsonSchema: boolean;
   force: boolean;
   dry: boolean;
+  plan: boolean;
+  watch: boolean;
   json: boolean;
   toon: boolean;
 }

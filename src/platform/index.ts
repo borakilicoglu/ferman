@@ -1,4 +1,5 @@
 import type { InspectPortProvider } from "../types";
+import { FermanError } from "../utils/errors";
 import { DarwinPortProvider } from "./darwin";
 import { LinuxPortProvider } from "./linux";
 import { WindowsPortProvider } from "./windows";
@@ -12,6 +13,6 @@ export function getPortProvider(platform = process.platform): InspectPortProvide
     case "win32":
       return new WindowsPortProvider();
     default:
-      throw new Error(`Unsupported platform: ${platform}`);
+      throw new FermanError(`Unsupported platform: ${platform}`, "UNSUPPORTED_PLATFORM", 2);
   }
 }

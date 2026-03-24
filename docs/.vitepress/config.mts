@@ -12,7 +12,8 @@ export default defineConfig({
     siteTitle: "ferman",
     nav: [
       { text: "Guide", link: "/" },
-      { text: "Vitest", link: "/vitest" },
+      { text: "Machine Output", link: "/outputs" },
+      { text: "Development", link: "/development" },
       { text: "GitHub", link: "https://github.com/borakilicoglu/ferman" },
       { text: "npm", link: "https://www.npmjs.com/package/ferman" }
     ],
@@ -26,7 +27,8 @@ export default defineConfig({
         text: "Guide",
         items: [
           { text: "Overview", link: "/" },
-          { text: "Vitest", link: "/vitest" }
+          { text: "Machine Output", link: "/outputs" },
+          { text: "Development", link: "/development" }
         ]
       }
     ]

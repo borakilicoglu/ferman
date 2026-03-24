@@ -26,17 +26,17 @@
 
 ## Overview
 
-`ferman` is a small cross-platform DevOps CLI for identifying which process is using a port and releasing it safely when needed. It is designed for both humans and AI agents, with machine-readable JSON output and predictable exit codes.
+`ferman` is a small cross-platform DevOps CLI for identifying which process is using a port and releasing it safely when needed. It is designed for both humans and AI agents, with structured machine output, stable error codes, and predictable exit semantics.
 
 ## Install
 
-Run without installing:
+Use instantly with `npx`:
 
 ```bash
 npx ferman 3000
 ```
 
-Install globally:
+Install globally for repeated local use:
 
 ```bash
 npm install -g ferman
@@ -49,35 +49,28 @@ Install locally for development:
 npm install
 ```
 
+Run the local CLI during development:
+
+```bash
+npm run dev -- 3000 --dry
+```
+
 ## Tools
 
 Core commands:
 
 ```bash
 ferman 3000
-```
-
-Force mode:
-
-```bash
 ferman 3000 --force
-```
-
-Dry mode:
-
-```bash
 ferman 3000 --dry
-```
-
-JSON mode:
-
-```bash
 ferman 3000 --json
-```
-
-TOON mode:
-
-```bash
+ferman 3000 --toon
+ferman 3000 5173 5432 --json
+ferman --common --json
+ferman --plan --json
+ferman --doctor --json
+ferman --json-schema
+ferman 3000 --watch --json
 ferman 3000 --toon
 ```
 
@@ -88,7 +81,13 @@ Capabilities matrix:
 | Inspect a port | `ferman 3000` | Human-readable | Finds the process and asks before termination |
 | Force release | `ferman 3000 --force` | Human-readable | Finds the process and terminates without confirmation |
 | Dry inspection | `ferman 3000 --dry` | Human-readable | Finds the process and does not terminate anything |
+| Multi-port support | `ferman 3000 5173 5432 --json` | Machine-readable JSON | Returns batch results and a summary for multiple ports |
+| Common-port scan | `ferman --common --json` | Machine-readable JSON | Scans a stable set of common local development ports |
+| Plan mode | `ferman 3000 --plan --json` | Machine-readable JSON | Returns a recommendation without terminating processes |
+| Doctor mode | `ferman --doctor --json` | Machine-readable JSON | Returns a local development port diagnosis and summary |
 | JSON mode | `ferman 3000 --json` | Machine-readable JSON | Returns structured output for scripts, CI, and AI agents |
+| JSON Schema | `ferman --json-schema` | Machine-readable JSON | Prints the JSON Schema for structured output consumers |
+| Watch mode | `ferman 3000 --watch --json` | JSON event stream | Re-checks ports continuously and emits snapshot events |
 | TOON mode | `ferman 3000 --toon` | Machine-readable TOON | Returns compact structured output optimized for LLM-facing workflows |
 | Free port no-op | `ferman 3000` | Human-readable | Reports that the port is already free and exits successfully |
 | Invalid input handling | `ferman abc`, `ferman abc --json`, `ferman abc --toon` | Error, JSON, or TOON | Rejects invalid port input with a deterministic exit code |
@@ -97,6 +96,8 @@ Example JSON output:
 
 ```json
 {
+  "ok": true,
+  "code": "PORT_RELEASED",
   "port": 3000,
   "busy": true,
   "processes": [
@@ -110,11 +111,88 @@ Example JSON output:
 }
 ```
 
+Example plan output:
+
+```json
+{
+  "ok": true,
+  "code": "PORT_INSPECTED",
+  "port": 3000,
+  "busy": true,
+  "processes": [
+    {
+      "pid": 1234,
+      "name": "node"
+    }
+  ],
+  "action": "inspected",
+  "message": "Plan mode active. No processes were terminated.",
+  "recommendation": {
+    "action": "terminate",
+    "reason": "A single process is using the port, so targeted termination is a reasonable next step.",
+    "risk": "low"
+  }
+}
+```
+
+Example batch output:
+
+```json
+{
+  "ok": true,
+  "code": "BATCH_COMPLETED",
+  "ports": [
+    {
+      "ok": true,
+      "code": "PORT_FREE",
+      "port": 3000,
+      "busy": false,
+      "processes": [],
+      "action": "none",
+      "message": "Port is already free."
+    }
+  ],
+  "summary": {
+    "total": 1,
+    "busy": 0,
+    "free": 1,
+    "released": 0,
+    "inspected": 0
+  }
+}
+```
+
+Example TOON output:
+
+```text
+ok: true
+code: PORT_RELEASED
+port: 3000
+busy: true
+processes[1]{pid,name}:
+  1234,node
+action: killed
+message: Port released.
+```
+
 Exit codes:
 
 - `0`: success
 - `1`: runtime error
 - `2`: invalid input
+
+Machine error codes:
+
+- `INVALID_ARGUMENTS`
+- `INVALID_PORT`
+- `OUTPUT_MODE_CONFLICT`
+- `UNSUPPORTED_PLATFORM`
+- `COMMAND_UNAVAILABLE`
+- `PERMISSION_DENIED`
+- `PROCESS_NOT_FOUND`
+- `KILL_FAILED`
+- `INSPECTION_FAILED`
+- `UNKNOWN_ERROR`
 
 Platform support:
 
