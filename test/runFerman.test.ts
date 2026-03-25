@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { ProcessInfo } from "../src/types";
+import type { CliOptions, ProcessInfo } from "../src/types";
 
 const inspectPort = vi.fn();
 const killProcesses = vi.fn();
@@ -16,6 +16,31 @@ vi.mock("../src/utils/confirm", () => ({
   confirmKill
 }));
 
+function createOptions(overrides: Partial<CliOptions> & Pick<CliOptions, "ports">): CliOptions {
+  return {
+    ports: overrides.ports,
+    common: false,
+    doctor: false,
+    list: false,
+    jsonSchema: false,
+    node: false,
+    nodePorts: false,
+    killAll: false,
+    self: false,
+    name: undefined,
+    filter: undefined,
+    signal: undefined,
+    force: false,
+    dry: false,
+    plan: false,
+    watch: false,
+    changedOnly: false,
+    json: false,
+    toon: false,
+    ...overrides
+  };
+}
+
 describe("runFerman", () => {
   beforeEach(() => {
     inspectPort.mockReset();
@@ -31,23 +56,7 @@ describe("runFerman", () => {
     });
 
     const { runFermanBatch } = await import("../src/index");
-    const result = await runFermanBatch({
-      ports: [3000],
-      common: false,
-      doctor: false,
-      list: false,
-      jsonSchema: false,
-      node: false,
-      nodePorts: false,
-      self: false,
-      force: false,
-      dry: false,
-      plan: false,
-      watch: false,
-      changedOnly: false,
-      json: false,
-      toon: false
-    });
+    const result = await runFermanBatch(createOptions({ ports: [3000] }));
 
     expect(result).toEqual({
       ok: true,
@@ -72,23 +81,7 @@ describe("runFerman", () => {
     });
 
     const { runFermanBatch } = await import("../src/index");
-    const result = await runFermanBatch({
-      ports: [3000],
-      common: false,
-      doctor: false,
-      list: false,
-      jsonSchema: false,
-      node: false,
-      nodePorts: false,
-      self: false,
-      force: false,
-      dry: true,
-      plan: false,
-      watch: false,
-      changedOnly: false,
-      json: true,
-      toon: false
-    });
+    const result = await runFermanBatch(createOptions({ ports: [3000], dry: true, json: true }));
 
     expect(result).toEqual({
       ok: true,
@@ -114,25 +107,9 @@ describe("runFerman", () => {
     killProcesses.mockResolvedValue(undefined);
 
     const { runFermanBatch } = await import("../src/index");
-    const result = await runFermanBatch({
-      ports: [3000],
-      common: false,
-      doctor: false,
-      list: false,
-      jsonSchema: false,
-      node: false,
-      nodePorts: false,
-      self: false,
-      force: true,
-      dry: false,
-      plan: false,
-      watch: false,
-      changedOnly: false,
-      json: false,
-      toon: false
-    });
+    const result = await runFermanBatch(createOptions({ ports: [3000], force: true }));
 
-    expect(killProcesses).toHaveBeenCalledWith(processes);
+    expect(killProcesses).toHaveBeenCalledWith(processes, undefined);
     expect(confirmKill).not.toHaveBeenCalled();
     expect(result).toEqual({
       ok: true,
@@ -143,6 +120,22 @@ describe("runFerman", () => {
       action: "killed",
       message: "Port released."
     });
+  });
+
+  it("passes a custom signal to port termination", async () => {
+    const processes: ProcessInfo[] = [{ pid: 7777, name: "node" }];
+
+    inspectPort.mockResolvedValue({
+      port: 3000,
+      busy: true,
+      processes
+    });
+    killProcesses.mockResolvedValue(undefined);
+
+    const { runFermanBatch } = await import("../src/index");
+    await runFermanBatch(createOptions({ ports: [3000], force: true, signal: "SIGKILL" }));
+
+    expect(killProcesses).toHaveBeenCalledWith(processes, "SIGKILL");
   });
 
   it("does not kill when confirmation is declined", async () => {
@@ -156,23 +149,7 @@ describe("runFerman", () => {
     confirmKill.mockResolvedValue(false);
 
     const { runFermanBatch } = await import("../src/index");
-    const result = await runFermanBatch({
-      ports: [3000],
-      common: false,
-      doctor: false,
-      list: false,
-      jsonSchema: false,
-      node: false,
-      nodePorts: false,
-      self: false,
-      force: false,
-      dry: false,
-      plan: false,
-      watch: false,
-      changedOnly: false,
-      json: false,
-      toon: false
-    });
+    const result = await runFermanBatch(createOptions({ ports: [3000] }));
 
     expect(confirmKill).toHaveBeenCalledWith(3000);
     expect(killProcesses).not.toHaveBeenCalled();
@@ -201,23 +178,7 @@ describe("runFerman", () => {
       });
 
     const { runFermanBatch } = await import("../src/index");
-    const result = await runFermanBatch({
-      ports: [3000, 5173],
-      common: false,
-      doctor: false,
-      list: false,
-      jsonSchema: false,
-      node: false,
-      nodePorts: false,
-      self: false,
-      force: false,
-      dry: true,
-      plan: false,
-      watch: false,
-      changedOnly: false,
-      json: true,
-      toon: false
-    });
+    const result = await runFermanBatch(createOptions({ ports: [3000, 5173], dry: true, json: true }));
 
     expect(result).toEqual({
       ok: true,
@@ -262,23 +223,7 @@ describe("runFerman", () => {
     });
 
     const { runFermanBatch } = await import("../src/index");
-    const result = await runFermanBatch({
-      ports: [3000],
-      common: false,
-      doctor: false,
-      list: false,
-      jsonSchema: false,
-      node: false,
-      nodePorts: false,
-      self: false,
-      force: false,
-      dry: false,
-      plan: true,
-      watch: false,
-      changedOnly: false,
-      json: true,
-      toon: false
-    });
+    const result = await runFermanBatch(createOptions({ ports: [3000], plan: true, json: true }));
 
     expect(result).toEqual({
       ok: true,
@@ -313,23 +258,7 @@ describe("runFerman", () => {
       });
 
     const { runFermanBatch } = await import("../src/index");
-    const result = await runFermanBatch({
-      ports: [3000, 3001],
-      common: false,
-      doctor: true,
-      list: false,
-      jsonSchema: false,
-      node: false,
-      nodePorts: false,
-      self: false,
-      force: false,
-      dry: true,
-      plan: false,
-      watch: false,
-      changedOnly: false,
-      json: true,
-      toon: false
-    });
+    const result = await runFermanBatch(createOptions({ ports: [3000, 3001], doctor: true, dry: true, json: true }));
 
     expect(result).toEqual({
       ok: true,

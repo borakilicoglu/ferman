@@ -116,8 +116,7 @@ async function runSinglePortFerman(
     );
   }
 
-  await provider.killProcesses(inspection.processes);
-
+  await provider.killProcesses(inspection.processes, options.signal);
   return createResult(
     "PORT_RELEASED",
     "Port released.",

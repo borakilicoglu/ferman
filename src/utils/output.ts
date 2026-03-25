@@ -7,6 +7,7 @@ import type {
 import type { NodeProcessListResult } from "../nodeProcesses";
 import type { NodePortListResult } from "../nodePorts";
 import type { PortListResult } from "../portList";
+import type { ProcessKillResult } from "../processes";
 
 export function cleanupToonOutput(output: string): string {
   return output
@@ -26,6 +27,13 @@ function isPortListResult(result: FermanResult): result is PortListResult {
 
 function isNodePortListResult(result: FermanResult): result is NodePortListResult {
   return "count" in result && result.code === "NODE_PORTS_LISTED";
+}
+
+function isProcessKillResult(result: FermanResult): result is ProcessKillResult {
+  return (
+    "count" in result &&
+    (result.code === "NO_MATCHING_PROCESSES" || result.code === "PROCESSES_KILLED")
+  );
 }
 
 function printSingleHumanResult(result: CommandResult): void {
@@ -66,6 +74,11 @@ export function printHumanResult(result: FermanResult): void {
 
   if (isNodePortListResult(result)) {
     printNodePortsHuman(result);
+    return;
+  }
+
+  if (isProcessKillResult(result)) {
+    printProcessKillHuman(result);
     return;
   }
 
@@ -129,6 +142,15 @@ function printNodePortsHuman(result: NodePortListResult): void {
   for (const process of result.processes) {
     const suffix = process.command ? ` - ${process.command}` : "";
     console.log(`- ${process.name} (${process.pid}) ports: ${process.ports.join(", ")}${suffix}`);
+  }
+}
+
+function printProcessKillHuman(result: ProcessKillResult): void {
+  console.log(result.message);
+
+  for (const process of result.processes) {
+    const suffix = process.command ? ` - ${process.command}` : "";
+    console.log(`- ${process.name ?? "process"} (${process.pid})${suffix}`);
   }
 }
 

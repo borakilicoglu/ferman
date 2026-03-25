@@ -42,8 +42,11 @@ It is designed to work well for both humans and AI agents:
 - `--plan` for recommendations without termination
 - `--doctor` for environment-level diagnosis
 - `--node` for active Node.js process listing
+- `--filter` for focused Node.js and node-port listings
 - `--node-ports` for active Node.js processes with listening ports
+- `--kill-all --name` for process targeting by name or command pattern
 - `--self` to include the current `ferman` invocation in node-oriented listings
+- `--signal` for explicit termination signals on Unix-like systems
 - `--json-schema` for integration-safe contracts
 - `--watch` for continuous re-checking
 - `--changed-only` for quieter watch output
@@ -81,8 +84,11 @@ ferman --common --json
 ferman --plan --json
 ferman --doctor --json
 ferman --node --json
+ferman --node --filter mcp --json
 ferman --node --self --json
 ferman --node-ports --json
+ferman --kill-all --name vite --json
+ferman --kill-all --name vite --signal SIGKILL --json
 ferman --json-schema
 ferman 3000 --watch --json
 ferman 3000 --watch --changed-only --json
@@ -102,8 +108,11 @@ Capabilities matrix:
 | Plan mode | `ferman --plan --json` | Machine-readable JSON | Returns a recommended next action without terminating processes |
 | Doctor mode | `ferman --doctor --json` | Machine-readable JSON | Returns a local development diagnosis and summary |
 | Node process listing | `ferman --node --json` | Machine-readable JSON | Lists active Node.js processes with PID and command data |
+| Filtered node listing | `ferman --node --filter mcp --json` | Machine-readable JSON | Restricts node-oriented output to matching process names or commands |
 | Node process listing with self | `ferman --node --self --json` | Machine-readable JSON | Includes the current `ferman` invocation in the process list |
 | Node process port listing | `ferman --node-ports --json` | Machine-readable JSON | Lists active Node.js processes together with listening ports |
+| Kill by process pattern | `ferman --kill-all --name vite --json` | Machine-readable JSON | Terminates all matching processes by name or command pattern |
+| Custom kill signal | `ferman --kill-all --name vite --signal SIGKILL --json` | Machine-readable JSON | Uses an explicit signal for Unix-like process termination |
 | JSON mode | `ferman 3000 --json` | Machine-readable JSON | Returns structured output for scripts, CI, and AI agents |
 | JSON Schema | `ferman --json-schema` | Machine-readable JSON | Prints the JSON Schema for structured output consumers |
 | Watch mode | `ferman 3000 --watch --json` | JSON event stream | Re-checks ports continuously and emits snapshot events |

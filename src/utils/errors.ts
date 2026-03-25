@@ -1,5 +1,7 @@
 export type SuccessCode =
   | "PORTS_LISTED"
+  | "NO_MATCHING_PROCESSES"
+  | "PROCESSES_KILLED"
   | "PORT_FREE"
   | "PORT_INSPECTED"
   | "OPERATION_CANCELLED"

@@ -45,6 +45,7 @@ That’s it.
 - works across macOS, Linux, and Windows
 - JSON and TOON output for automation and LLM workflows
 - listening port inventory
+- process targeting with `--kill-all --name`
 - includes an MCP wrapper for agent tool integration
 
 ---
@@ -109,10 +110,22 @@ List active Node.js processes:
 npx ferman --node
 ```
 
+Filter Node.js processes:
+
+```bash
+npx ferman --node --filter mcp
+```
+
 List active Node.js processes with listening ports:
 
 ```bash
 npx ferman --node-ports
+```
+
+Kill all matching processes by pattern:
+
+```bash
+npx ferman --kill-all --name vite
 ```
 
 ---
@@ -147,6 +160,18 @@ Include the current `ferman` process in node listings:
 
 ```bash
 npx ferman --node --self --json
+```
+
+Filter node-oriented listings:
+
+```bash
+npx ferman --node --filter mcp --json
+```
+
+Kill matching processes with a custom signal:
+
+```bash
+npx ferman --kill-all --name vite --signal SIGKILL --json
 ```
 
 Plan mode (no kill, just recommendation):
@@ -222,7 +247,9 @@ message: Port released.
 - JSON and TOON output for automation and LLM workflows
 - listening port inventory
 - Node.js process and port visibility
+- process targeting by name or command pattern
 - optional self-inclusion for node-oriented diagnostics
+- configurable kill signals on Unix-like systems
 - multi-port support
 - plan & dry modes
 - watch mode

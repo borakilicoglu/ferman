@@ -3,6 +3,7 @@ import type { ErrorCode, SuccessCode } from "./utils/errors";
 import type { NodeProcessListResult } from "./nodeProcesses";
 import type { NodePortListResult } from "./nodePorts";
 import type { PortListResult } from "./portList";
+import type { ProcessKillResult } from "./processes";
 
 export interface ProcessInfo {
   pid: number;
@@ -60,7 +61,7 @@ export interface WatchEvent {
 
 export interface InspectPortProvider {
   inspectPort(port: number): Promise<PortInspectionResult>;
-  killProcesses(processes: ProcessInfo[]): Promise<void>;
+  killProcesses(processes: ProcessInfo[], signal?: NodeJS.Signals): Promise<void>;
 }
 
 export interface CliOptions {
@@ -71,7 +72,11 @@ export interface CliOptions {
   jsonSchema: boolean;
   node: boolean;
   nodePorts: boolean;
+  killAll: boolean;
   self: boolean;
+  name?: string;
+  filter?: string;
+  signal?: NodeJS.Signals;
   force: boolean;
   dry: boolean;
   plan: boolean;
@@ -86,4 +91,5 @@ export type FermanResult =
   | BatchCommandResult
   | PortListResult
   | NodeProcessListResult
-  | NodePortListResult;
+  | NodePortListResult
+  | ProcessKillResult;

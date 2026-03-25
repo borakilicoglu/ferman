@@ -3,6 +3,7 @@ import type { CliOptions, WatchEvent } from "./types";
 import { listNodeProcesses } from "./nodeProcesses";
 import { listNodePorts } from "./nodePorts";
 import { listPorts } from "./portList";
+import { killProcessesByPattern } from "./processes";
 import { COMMON_PORTS } from "./utils/commonPorts";
 import { getJsonSchema } from "./utils/schema";
 import { FermanError, normalizeError } from "./utils/errors";
@@ -24,10 +25,11 @@ function printHelp(): void {
 Inspect and free busy ports instantly.
 
 Usage:
-  ferman <port...> [--common] [--doctor] [--force] [--dry] [--plan] [--watch] [--changed-only] [--json | --toon]
+  ferman <port...> [--common] [--doctor] [--force] [--dry] [--plan] [--watch] [--changed-only] [--signal <signal>] [--json | --toon]
   ferman --list [--json | --toon]
-  ferman --node [--self] [--json | --toon]
-  ferman --node-ports [--self] [--json | --toon]
+  ferman --node [--self] [--filter <pattern>] [--json | --toon]
+  ferman --node-ports [--self] [--filter <pattern>] [--json | --toon]
+  ferman --kill-all --name <pattern> [--signal <signal>] [--json | --toon]
   ferman --json-schema
 
 Options:
@@ -36,7 +38,11 @@ Options:
   --list    List active listening ports
   --node    List active Node.js processes
   --node-ports  List active Node.js processes with listening ports
+  --kill-all  Kill matching processes by name or command pattern
+  --name    Pattern used by --kill-all
+  --filter    Filter node-oriented listings by name or command
   --self    Include the current ferman invocation in node-oriented listings
+  --signal    Signal to use for process termination on Unix-like systems
   --force   Kill without confirmation
   --dry     Inspect only, do not kill
   --plan    Return a recommended next action without terminating processes
@@ -56,6 +62,7 @@ function parseArgs(argv: string[]): CliOptions {
   const jsonSchema = argv.includes("--json-schema");
   const node = argv.includes("--node");
   const nodePorts = argv.includes("--node-ports");
+  const killAll = argv.includes("--kill-all");
   const self = argv.includes("--self");
   const force = argv.includes("--force");
   const dry = argv.includes("--dry");
@@ -65,23 +72,37 @@ function parseArgs(argv: string[]): CliOptions {
   const json = argv.includes("--json");
   const toon = argv.includes("--toon");
   const help = argv.includes("--help") || argv.includes("-h");
+  const nameIndex = argv.indexOf("--name");
+  const filterIndex = argv.indexOf("--filter");
+  const signalIndex = argv.indexOf("--signal");
+  const name = nameIndex >= 0 ? argv[nameIndex + 1] : undefined;
+  const filter = filterIndex >= 0 ? argv[filterIndex + 1] : undefined;
+  const signal = signalIndex >= 0 ? argv[signalIndex + 1] : undefined;
 
   if (help) {
     printHelp();
     process.exit(0);
   }
 
-  const positional = argv.filter((arg) => !arg.startsWith("-"));
+  const valueFlags = new Set(["--name", "--filter", "--signal"]);
+  const positional = argv.filter((arg, index) => {
+    if (arg.startsWith("-")) {
+      return false;
+    }
 
-  if ((common || doctor || list || node || nodePorts) && positional.length > 0) {
+    const previous = argv[index - 1];
+    return !valueFlags.has(previous ?? "");
+  });
+
+  if ((common || doctor || list || node || nodePorts || killAll) && positional.length > 0) {
     throw new FermanError(
-      "Use either explicit ports or --common/--doctor/--list/--node/--node-ports, not both.",
+      "Use either explicit ports or --common/--doctor/--list/--node/--node-ports/--kill-all, not both.",
       "INVALID_ARGUMENTS",
       2
     );
   }
 
-  if (jsonSchema && (common || doctor || list || node || nodePorts || positional.length > 0)) {
+  if (jsonSchema && (common || doctor || list || node || nodePorts || killAll || positional.length > 0)) {
     throw new FermanError(
       "Use --json-schema on its own without ports or scan modes.",
       "INVALID_ARGUMENTS",
@@ -89,17 +110,25 @@ function parseArgs(argv: string[]): CliOptions {
     );
   }
 
-  if (node && nodePorts) {
+  if ((node ? 1 : 0) + (nodePorts ? 1 : 0) + (killAll ? 1 : 0) > 1) {
     throw new FermanError(
-      "Choose either --node or --node-ports, not both.",
+      "Choose only one of --node, --node-ports, or --kill-all at a time.",
       "INVALID_ARGUMENTS",
       2
     );
   }
 
-  if ((list || node || nodePorts) && (force || dry || plan || watch || changedOnly)) {
+  if ((list || node || nodePorts) && (force || dry || plan || watch || changedOnly || name !== undefined)) {
     throw new FermanError(
-      "Use --list, --node, and --node-ports without --force, --dry, --plan, --watch, or --changed-only.",
+      "Use --list, --node, and --node-ports without --force, --dry, --plan, --watch, --changed-only, or --name.",
+      "INVALID_ARGUMENTS",
+      2
+    );
+  }
+
+  if (killAll && (force || dry || plan || watch || changedOnly || list || common || doctor)) {
+    throw new FermanError(
+      "Use --kill-all with --name and optional --signal only.",
       "INVALID_ARGUMENTS",
       2
     );
@@ -113,7 +142,55 @@ function parseArgs(argv: string[]): CliOptions {
     );
   }
 
-  if (!jsonSchema && !common && !doctor && !list && !node && !nodePorts && positional.length === 0) {
+  if (filter !== undefined && !node && !nodePorts) {
+    throw new FermanError(
+      "Use --filter together with --node or --node-ports.",
+      "INVALID_ARGUMENTS",
+      2
+    );
+  }
+
+  if (name !== undefined && !killAll) {
+    throw new FermanError(
+      "Use --name together with --kill-all.",
+      "INVALID_ARGUMENTS",
+      2
+    );
+  }
+
+  if (killAll && !name) {
+    throw new FermanError(
+      "Use --kill-all together with --name <pattern>.",
+      "INVALID_ARGUMENTS",
+      2
+    );
+  }
+
+  if (signal !== undefined && !/^SIG[A-Z0-9]+$/i.test(signal.trim())) {
+    throw new FermanError(
+      "Use --signal with a signal name such as SIGTERM or SIGKILL.",
+      "INVALID_ARGUMENTS",
+      2
+    );
+  }
+
+  if (signal !== undefined && !killAll && !positional.length) {
+    throw new FermanError(
+      "Use --signal with explicit ports or with --kill-all.",
+      "INVALID_ARGUMENTS",
+      2
+    );
+  }
+
+  if (signal !== undefined && (common || doctor || list || node || nodePorts || jsonSchema)) {
+    throw new FermanError(
+      "Use --signal with explicit ports or with --kill-all.",
+      "INVALID_ARGUMENTS",
+      2
+    );
+  }
+
+  if (!jsonSchema && !common && !doctor && !list && !node && !nodePorts && !killAll && positional.length === 0) {
     throw new FermanError("Port is required.", "INVALID_PORT", 2);
   }
 
@@ -149,7 +226,11 @@ function parseArgs(argv: string[]): CliOptions {
     jsonSchema,
     node,
     nodePorts,
+    killAll,
     self,
+    name,
+    filter,
+    signal: signal?.trim().toUpperCase() as NodeJS.Signals | undefined,
     force,
     dry,
     plan,
@@ -235,7 +316,7 @@ async function main(): Promise<void> {
 
   try {
     if (options.node) {
-      const result = await listNodeProcesses({ includeSelf: options.self });
+      const result = await listNodeProcesses({ includeSelf: options.self, filter: options.filter });
 
       if (options.json) {
         printJsonResult(result);
@@ -265,7 +346,22 @@ async function main(): Promise<void> {
     }
 
     if (options.nodePorts) {
-      const result = await listNodePorts({ includeSelf: options.self });
+      const result = await listNodePorts({ includeSelf: options.self, filter: options.filter });
+
+      if (options.json) {
+        printJsonResult(result);
+      } else if (options.toon) {
+        await printToonResult(result);
+      } else {
+        printHumanResult(result);
+      }
+
+      process.exit(0);
+      return;
+    }
+
+    if (options.killAll && options.name) {
+      const result = await killProcessesByPattern(options.name, options.signal);
 
       if (options.json) {
         printJsonResult(result);

@@ -136,6 +136,13 @@ Use `--node` to list active Node.js processes:
 ferman --node --json
 ```
 
+Use `--filter` when you only want matching Node.js processes or node-port entries:
+
+```bash
+ferman --node --filter mcp --json
+ferman --node-ports --filter vite --json
+```
+
 Use `--self` when you explicitly want the current `ferman` invocation and its wrapper processes to remain visible:
 
 ```bash
@@ -167,6 +174,32 @@ Example `--node-ports` result:
   ],
   "count": 1,
   "message": "Listed active Node.js processes with listening ports."
+}
+```
+
+## Process Kill Output
+
+Use `--kill-all --name` to terminate every process whose name or command matches a pattern:
+
+```bash
+ferman --kill-all --name vite --json
+```
+
+Use `--signal` on Unix-like systems when you need explicit signal control:
+
+```bash
+ferman --kill-all --name vite --signal SIGKILL --json
+```
+
+Example no-match result:
+
+```json
+{
+  "ok": true,
+  "code": "NO_MATCHING_PROCESSES",
+  "processes": [],
+  "count": 0,
+  "message": "No matching processes were found for pattern \"vite\"."
 }
 ```
 

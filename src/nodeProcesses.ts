@@ -107,6 +107,20 @@ export function parseWindowsTasklistOutput(output: string): NodeProcessInfo[] {
 export interface ListNodeProcessOptions {
   platform?: NodeJS.Platform;
   includeSelf?: boolean;
+  filter?: string;
+}
+
+function matchesFilter(processInfo: NodeProcessInfo, filter?: string): boolean {
+  const needle = filter?.trim().toLowerCase();
+
+  if (!needle) {
+    return true;
+  }
+
+  return (
+    processInfo.name.toLowerCase().includes(needle) ||
+    (processInfo.command ?? "").toLowerCase().includes(needle)
+  );
 }
 
 export async function listNodeProcesses(
@@ -114,6 +128,7 @@ export async function listNodeProcesses(
 ): Promise<NodeProcessListResult> {
   const platform = options.platform ?? process.platform;
   const includeSelf = options.includeSelf ?? false;
+  const filter = options.filter;
   let processes: NodeProcessInfo[] = [];
 
   if (platform === "win32") {
@@ -135,6 +150,8 @@ export async function listNodeProcesses(
   if (!includeSelf) {
     processes = processes.filter(shouldIncludeNodeProcess);
   }
+
+  processes = processes.filter((processInfo) => matchesFilter(processInfo, filter));
 
   return {
     ok: true,

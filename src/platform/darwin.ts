@@ -48,7 +48,7 @@ export class DarwinPortProvider implements InspectPortProvider {
     };
   }
 
-  async killProcesses(processes: ProcessInfo[]): Promise<void> {
-    await killWithSignal(processes);
+  async killProcesses(processes: ProcessInfo[], signal?: NodeJS.Signals): Promise<void> {
+    await killWithSignal(processes, signal);
   }
 }

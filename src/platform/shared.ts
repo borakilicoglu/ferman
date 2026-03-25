@@ -12,10 +12,13 @@ export async function resolveUnixProcessName(pid: number): Promise<string | unde
   return name || undefined;
 }
 
-export async function killWithSignal(processes: ProcessInfo[]): Promise<void> {
+export async function killWithSignal(
+  processes: ProcessInfo[],
+  signal: NodeJS.Signals = "SIGTERM"
+): Promise<void> {
   for (const processInfo of processes) {
     try {
-      process.kill(processInfo.pid, "SIGTERM");
+      process.kill(processInfo.pid, signal);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       throw new Error(`Failed to kill PID ${processInfo.pid}: ${message}`);

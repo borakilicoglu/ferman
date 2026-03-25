@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project follows Semantic Versioning.
 
+## [0.1.8] - 2026-03-25
+
+### Added
+
+- `--kill-all --name` for terminating matching processes by name or command pattern
+- `--signal` for explicit process termination control on Unix-like systems
+- `--filter` support for `--node` and `--node-ports`
+- Generic process parser tests for Unix and Windows process inventories
+
+### Changed
+
+- Expanded README and docs to cover process targeting, filtered node listings, and custom kill signals
+- Unified port and process termination flows behind the same signal-aware interface
+
 ## [0.1.7] - 2026-03-25
 
 ### Added
