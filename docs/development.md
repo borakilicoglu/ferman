@@ -43,6 +43,55 @@ The MCP wrapper exposes these tools:
 - `list_node_ports`
 - `get_output_schema`
 
+Example MCP tool input:
+
+```json
+{
+  "name": "inspect_ports",
+  "arguments": {
+    "ports": [3000, 5173],
+    "plan": true
+  }
+}
+```
+
+Example MCP structured result:
+
+```json
+{
+  "ok": true,
+  "code": "BATCH_COMPLETED",
+  "ports": [
+    {
+      "ok": true,
+      "code": "PORT_INSPECTED",
+      "port": 3000,
+      "busy": true,
+      "processes": [
+        {
+          "pid": 1234,
+          "name": "node"
+        }
+      ],
+      "action": "inspected",
+      "message": "Plan mode active. No processes were terminated.",
+      "recommendation": {
+        "action": "terminate",
+        "reason": "A single process is using the port, so targeted termination is a reasonable next step.",
+        "risk": "low"
+      }
+    }
+  ],
+  "summary": {
+    "total": 1,
+    "busy": 1,
+    "free": 0,
+    "released": 0,
+    "inspected": 1
+  }
+}
+```
+
 Primary quality checks:
 
 ```bash

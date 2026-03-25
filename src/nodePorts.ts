@@ -127,7 +127,7 @@ export async function listNodePorts(options: ListNodeProcessOptions = {}): Promi
     message:
       listeningProcesses.length > 0
         ? "Listed active Node.js processes with listening ports."
-        : "No active Node.js processes with listening ports were found."
+        : "No active Node.js processes with listening ports were found. Active Node.js processes may still be running without binding to a port."
   };
 }
 

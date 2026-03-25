@@ -7,6 +7,14 @@ import type {
 import type { NodeProcessListResult } from "../nodeProcesses";
 import type { NodePortListResult } from "../nodePorts";
 
+export function cleanupToonOutput(output: string): string {
+  return output
+    .replace(/^([A-Za-z0-9_]+)\[0\]:$/gm, "$1[]:")
+    .replace(/^[A-Za-z0-9_]+:\s+null$/gm, "")
+    .replace(/\n{2,}/g, "\n")
+    .trim();
+}
+
 function isNodeProcessListResult(result: FermanResult): result is NodeProcessListResult {
   return "count" in result && result.code === "NODE_PROCESSES_LISTED";
 }
@@ -79,6 +87,14 @@ function printNodeProcessesHuman(result: NodeProcessListResult): void {
 function printNodePortsHuman(result: NodePortListResult): void {
   console.log(result.message);
 
+  if (result.count > 0) {
+    console.log(
+      result.count === 1
+        ? "1 active Node.js process is exposing a listening port."
+        : `${String(result.count)} active Node.js processes are exposing listening ports.`
+    );
+  }
+
   for (const process of result.processes) {
     const suffix = process.command ? ` - ${process.command}` : "";
     console.log(`- ${process.name} (${process.pid}) ports: ${process.ports.join(", ")}${suffix}`);
@@ -93,12 +109,21 @@ export async function printToonResult(
   result: FermanResult | ErrorResult
 ): Promise<void> {
   const { encode } = await import("@toon-format/toon");
-  console.log(encode(result));
+  console.log(cleanupToonOutput(encode(result)));
 }
 
 export function printWatchEventHuman(event: WatchEvent): void {
   console.log(`[${event.timestamp}] snapshot #${event.iteration}`);
   printHumanResult(event.result);
+}
+
+export function printWatchStartHuman(changedOnly: boolean): void {
+  if (changedOnly) {
+    console.log("Watch mode started. Waiting for changes...");
+    return;
+  }
+
+  console.log("Watch mode started. Emitting snapshots every 2 seconds...");
 }
 
 export function printWatchEventJson(event: WatchEvent): void {
@@ -107,7 +132,7 @@ export function printWatchEventJson(event: WatchEvent): void {
 
 export async function printWatchEventToon(event: WatchEvent): Promise<void> {
   const { encode } = await import("@toon-format/toon");
-  console.log(encode(event));
+  console.log(cleanupToonOutput(encode(event)));
 }
 
 export async function printError(
@@ -122,7 +147,7 @@ export async function printError(
 
   if (toon) {
     const { encode } = await import("@toon-format/toon");
-    console.error(encode(result));
+    console.error(cleanupToonOutput(encode(result)));
     return;
   }
 

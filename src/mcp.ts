@@ -97,7 +97,7 @@ function resolvePorts(ports?: number[], common?: boolean): number[] {
 
 const server = new McpServer({
   name: "ferman-mcp",
-  version: "0.1.4"
+  version: "0.1.5"
 });
 
 server.registerTool(

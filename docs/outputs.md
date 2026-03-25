@@ -176,7 +176,8 @@ Example diagnosis:
     "status": "healthy",
     "message": "All checked ports are free.",
     "recommendations": [
-      "No action required."
+      "No action required.",
+      "Run the same doctor check again after starting local services if you want to verify port usage."
     ]
   }
 }
@@ -224,6 +225,8 @@ Use `--changed-only` with watch mode when you want quieter output and only care 
 ```bash
 ferman 3000 --watch --changed-only --json
 ```
+
+In human-readable mode, watch now prints a short startup banner so it is clear whether it is waiting for changes or emitting regular snapshots.
 
 ## Selection Rules
 

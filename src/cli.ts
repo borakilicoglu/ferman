@@ -10,6 +10,7 @@ import {
   printHumanResult,
   printJsonResult,
   printToonResult,
+  printWatchStartHuman,
   printWatchEventHuman,
   printWatchEventJson,
   printWatchEventToon
@@ -166,6 +167,10 @@ async function runWatchMode(options: CliOptions): Promise<never> {
     force: false,
     dry: true
   };
+
+  if (!options.json && !options.toon) {
+    printWatchStartHuman(options.changedOnly);
+  }
 
   while (true) {
     const result = await runFermanBatch(watchOptions);

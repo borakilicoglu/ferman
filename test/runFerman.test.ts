@@ -358,8 +358,8 @@ describe("runFerman", () => {
         status: "attention",
         message: "Some checked ports are busy: 3001.",
         recommendations: [
-          "Review the busy ports before terminating processes.",
-          "Use --plan for recommendations or --dry for inspection-only output."
+          "Run `ferman --plan --json` on a specific busy port for a safer next-step recommendation.",
+          "Use `ferman <port> --dry` to inspect a busy port without terminating anything."
         ]
       }
     });

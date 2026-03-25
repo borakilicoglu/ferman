@@ -49,7 +49,10 @@ function createDiagnosis(result: BatchCommandResult): BatchCommandResult["diagno
     return {
       status: "healthy",
       message: "All checked ports are free.",
-      recommendations: ["No action required."]
+      recommendations: [
+        "No action required.",
+        "Run the same doctor check again after starting local services if you want to verify port usage."
+      ]
     };
   }
 
@@ -59,8 +62,8 @@ function createDiagnosis(result: BatchCommandResult): BatchCommandResult["diagno
     status: "attention",
     message: `Some checked ports are busy: ${busyPorts.join(", ")}.`,
     recommendations: [
-      "Review the busy ports before terminating processes.",
-      "Use --plan for recommendations or --dry for inspection-only output."
+      "Run `ferman --plan --json` on a specific busy port for a safer next-step recommendation.",
+      "Use `ferman <port> --dry` to inspect a busy port without terminating anything."
     ]
   };
 }
