@@ -20,7 +20,20 @@ function normalizeCommand(command?: string): string | undefined {
   }
 
   const normalized = command.replace(/\s+/g, " ").trim();
-  return normalized || undefined;
+
+  if (!normalized) {
+    return undefined;
+  }
+
+  const executablePrefix =
+    /^(node|tsx|ts-node)\s+/i.exec(normalized)?.[0];
+
+  if (!executablePrefix) {
+    return normalized;
+  }
+
+  const trimmed = normalized.slice(executablePrefix.length).trim();
+  return trimmed || normalized;
 }
 
 function shouldIncludeNodeProcess(processInfo: NodeProcessInfo): boolean {

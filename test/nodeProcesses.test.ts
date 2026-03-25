@@ -26,7 +26,7 @@ describe("node process parsers", () => {
       {
         pid: 5678,
         name: "tsx",
-        command: "tsx watch src/index.ts"
+        command: "watch src/index.ts"
       },
       {
         pid: 9999,
