@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project follows Semantic Versioning.
 
+## [0.1.3] - 2026-03-25
+
+### Added
+
+- `--node` mode for listing active Node.js processes
+- Structured JSON and TOON output for Node.js process listings
+- Parser-level tests for Unix `ps` and Windows `tasklist` Node process output
+
+### Changed
+
+- Expanded README and docs to cover Node.js process listing mode
+- Clarified platform verification status for macOS, Linux, and Windows
+
 ## [0.1.2] - 2026-03-24
 
 ### Added
