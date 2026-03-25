@@ -1,5 +1,6 @@
 export type ActionResult = "none" | "inspected" | "killed";
 import type { ErrorCode, SuccessCode } from "./utils/errors";
+import type { NodeProcessListResult } from "./nodeProcesses";
 
 export interface ProcessInfo {
   pid: number;
@@ -65,6 +66,7 @@ export interface CliOptions {
   common: boolean;
   doctor: boolean;
   jsonSchema: boolean;
+  node: boolean;
   force: boolean;
   dry: boolean;
   plan: boolean;
@@ -72,3 +74,5 @@ export interface CliOptions {
   json: boolean;
   toon: boolean;
 }
+
+export type FermanResult = CommandResult | BatchCommandResult | NodeProcessListResult;

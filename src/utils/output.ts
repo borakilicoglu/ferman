@@ -1,4 +1,14 @@
-import type { BatchCommandResult, CommandResult, ErrorResult, WatchEvent } from "../types";
+import type {
+  CommandResult,
+  ErrorResult,
+  FermanResult,
+  WatchEvent
+} from "../types";
+import type { NodeProcessListResult } from "../nodeProcesses";
+
+function isNodeProcessListResult(result: FermanResult): result is NodeProcessListResult {
+  return "count" in result && result.code === "NODE_PROCESSES_LISTED";
+}
 
 function printSingleHumanResult(result: CommandResult): void {
   console.log("Inspecting port...");
@@ -25,7 +35,12 @@ function printSingleHumanResult(result: CommandResult): void {
   }
 }
 
-export function printHumanResult(result: CommandResult | BatchCommandResult): void {
+export function printHumanResult(result: FermanResult): void {
+  if (isNodeProcessListResult(result)) {
+    printNodeProcessesHuman(result);
+    return;
+  }
+
   if ("ports" in result) {
     for (const [index, item] of result.ports.entries()) {
       if (index > 0) {
@@ -42,12 +57,21 @@ export function printHumanResult(result: CommandResult | BatchCommandResult): vo
   printSingleHumanResult(result);
 }
 
-export function printJsonResult(result: CommandResult | BatchCommandResult): void {
+function printNodeProcessesHuman(result: NodeProcessListResult): void {
+  console.log(result.message);
+
+  for (const process of result.processes) {
+    const suffix = process.command ? ` - ${process.command}` : "";
+    console.log(`- ${process.name} (${process.pid})${suffix}`);
+  }
+}
+
+export function printJsonResult(result: FermanResult): void {
   console.log(JSON.stringify(result, null, 2));
 }
 
 export async function printToonResult(
-  result: CommandResult | BatchCommandResult | ErrorResult
+  result: FermanResult | ErrorResult
 ): Promise<void> {
   const { encode } = await import("@toon-format/toon");
   console.log(encode(result));

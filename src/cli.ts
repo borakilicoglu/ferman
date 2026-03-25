@@ -1,5 +1,6 @@
 import { runFermanBatch } from "./index";
 import type { CliOptions, WatchEvent } from "./types";
+import { listNodeProcesses } from "./nodeProcesses";
 import { COMMON_PORTS } from "./utils/commonPorts";
 import { getJsonSchema } from "./utils/schema";
 import { FermanError, normalizeError } from "./utils/errors";
@@ -21,11 +22,13 @@ Inspect and free busy ports instantly.
 
 Usage:
   ferman <port...> [--common] [--doctor] [--force] [--dry] [--plan] [--watch] [--json | --toon]
+  ferman --node [--json | --toon]
   ferman --json-schema
 
 Options:
   --common  Inspect common local development ports
   --doctor  Diagnose common local development ports and summarize their state
+  --node    List active Node.js processes
   --force   Kill without confirmation
   --dry     Inspect only, do not kill
   --plan    Return a recommended next action without terminating processes
@@ -41,6 +44,7 @@ function parseArgs(argv: string[]): CliOptions {
   const common = argv.includes("--common");
   const doctor = argv.includes("--doctor");
   const jsonSchema = argv.includes("--json-schema");
+  const node = argv.includes("--node");
   const force = argv.includes("--force");
   const dry = argv.includes("--dry");
   const plan = argv.includes("--plan");
@@ -56,15 +60,15 @@ function parseArgs(argv: string[]): CliOptions {
 
   const positional = argv.filter((arg) => !arg.startsWith("-"));
 
-  if ((common || doctor) && positional.length > 0) {
+  if ((common || doctor || node) && positional.length > 0) {
     throw new FermanError(
-      "Use either explicit ports or --common/--doctor, not both.",
+      "Use either explicit ports or --common/--doctor/--node, not both.",
       "INVALID_ARGUMENTS",
       2
     );
   }
 
-  if (jsonSchema && (common || doctor || positional.length > 0)) {
+  if (jsonSchema && (common || doctor || node || positional.length > 0)) {
     throw new FermanError(
       "Use --json-schema on its own without ports or scan modes.",
       "INVALID_ARGUMENTS",
@@ -72,7 +76,15 @@ function parseArgs(argv: string[]): CliOptions {
     );
   }
 
-  if (!jsonSchema && !common && !doctor && positional.length === 0) {
+  if (node && (force || dry || plan || watch)) {
+    throw new FermanError(
+      "Use --node without --force, --dry, --plan, or --watch.",
+      "INVALID_ARGUMENTS",
+      2
+    );
+  }
+
+  if (!jsonSchema && !common && !doctor && !node && positional.length === 0) {
     throw new FermanError("Port is required.", "INVALID_PORT", 2);
   }
 
@@ -97,6 +109,7 @@ function parseArgs(argv: string[]): CliOptions {
     common,
     doctor,
     jsonSchema,
+    node,
     force,
     dry,
     plan,
@@ -167,6 +180,21 @@ async function main(): Promise<void> {
   }
 
   try {
+    if (options.node) {
+      const result = await listNodeProcesses();
+
+      if (options.json) {
+        printJsonResult(result);
+      } else if (options.toon) {
+        await printToonResult(result);
+      } else {
+        printHumanResult(result);
+      }
+
+      process.exit(0);
+      return;
+    }
+
     if (options.watch) {
       await runWatchMode(options);
     }

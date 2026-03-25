@@ -3,7 +3,8 @@ export type SuccessCode =
   | "PORT_INSPECTED"
   | "OPERATION_CANCELLED"
   | "PORT_RELEASED"
-  | "BATCH_COMPLETED";
+  | "BATCH_COMPLETED"
+  | "NODE_PROCESSES_LISTED";
 
 export type ErrorCode =
   | "INVALID_ARGUMENTS"

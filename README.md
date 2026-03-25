@@ -69,6 +69,7 @@ ferman 3000 5173 5432 --json
 ferman --common --json
 ferman --plan --json
 ferman --doctor --json
+ferman --node --json
 ferman --json-schema
 ferman 3000 --watch --json
 ferman 3000 --toon
@@ -85,6 +86,7 @@ Capabilities matrix:
 | Common-port scan | `ferman --common --json` | Machine-readable JSON | Scans a stable set of common local development ports |
 | Plan mode | `ferman 3000 --plan --json` | Machine-readable JSON | Returns a recommendation without terminating processes |
 | Doctor mode | `ferman --doctor --json` | Machine-readable JSON | Returns a local development port diagnosis and summary |
+| Node process listing | `ferman --node --json` | Machine-readable JSON | Lists active Node.js processes with PID and command data |
 | JSON mode | `ferman 3000 --json` | Machine-readable JSON | Returns structured output for scripts, CI, and AI agents |
 | JSON Schema | `ferman --json-schema` | Machine-readable JSON | Prints the JSON Schema for structured output consumers |
 | Watch mode | `ferman 3000 --watch --json` | JSON event stream | Re-checks ports continuously and emits snapshot events |
@@ -198,6 +200,12 @@ Platform support:
 
 - macOS and Linux: `lsof`, `ps`
 - Windows: `netstat`, `tasklist`, `taskkill`
+
+Verification status:
+
+- macOS: verified in a live runtime environment
+- Linux: implemented and parser-tested
+- Windows: implemented and parser-tested
 
 Local tooling:
 
