@@ -28,6 +28,21 @@ Run the CLI in development:
 npm run dev -- 3000 --dry
 ```
 
+Run the MCP server in development:
+
+```bash
+npm run dev:mcp
+```
+
+The MCP wrapper exposes these tools:
+
+- `inspect_ports`
+- `release_ports`
+- `doctor_ports`
+- `list_node_processes`
+- `list_node_ports`
+- `get_output_schema`
+
 Primary quality checks:
 
 ```bash
@@ -67,6 +82,7 @@ The current CLI now includes a larger AI-oriented feature set:
 - doctor mode diagnosis
 - JSON Schema output
 - watch mode snapshot events
+- MCP wrapper over stdio for tool-based integrations
 
 ## Commit Workflow
 

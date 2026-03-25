@@ -28,7 +28,8 @@
   "type": "commonjs",
   "main": "dist/index.js",
   "bin": {
-    "ferman": "bin/ferman.js"
+    "ferman": "bin/ferman.js",
+    "ferman-mcp": "bin/ferman-mcp.js"
   },
   "files": [
     "bin",
@@ -39,6 +40,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "tsx src/cli.ts",
+    "dev:mcp": "tsx src/mcp.ts",
     "docs:build": "vitepress build docs",
     "docs:dev": "vitepress dev docs",
     "docs:preview": "vitepress preview docs",
@@ -47,7 +49,7 @@
     "prepare": "husky",
     "prepublishOnly": "npm run test && npm run build",
     "release:check": "npm run lint && npm run test && npm run typecheck && npm run build && npm run smoke && npm_config_cache=.npm-cache npm pack --dry-run --ignore-scripts",
-    "smoke": "npm run build && node dist/cli.js --help && node dist/cli.js 65535 --dry --json && node dist/cli.js 65535 --dry --toon && node dist/cli.js --node --json && node dist/cli.js --node-ports --json",
+    "smoke": "npm run build && node dist/cli.js --help && node dist/cli.js 65535 --dry --json && node dist/cli.js 65535 --dry --toon && node dist/cli.js --node --json && node dist/cli.js --node-ports --json && node -e \"require('./dist/mcp.js'); setTimeout(() => process.exit(0), 200)\"",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit -p tsconfig.json",
@@ -70,5 +72,9 @@
     "typescript-eslint": "^8.28.0",
     "vitepress": "^2.0.0-alpha.12",
     "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.27.1",
+    "zod": "^4.3.6"
   }
 }

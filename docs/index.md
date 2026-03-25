@@ -46,6 +46,7 @@ It is designed to work well for both humans and AI agents:
 - `--json-schema` for integration-safe contracts
 - `--watch` for continuous re-checking
 - `--changed-only` for quieter watch output
+- `ferman-mcp` for MCP-based agent integration over stdio
 - predictable exit codes for automation
 
 ## Install
@@ -83,6 +84,7 @@ ferman --node-ports --json
 ferman --json-schema
 ferman 3000 --watch --json
 ferman 3000 --watch --changed-only --json
+npx -p ferman ferman-mcp
 ```
 
 Capabilities matrix:
@@ -103,6 +105,7 @@ Capabilities matrix:
 | JSON Schema | `ferman --json-schema` | Machine-readable JSON | Prints the JSON Schema for structured output consumers |
 | Watch mode | `ferman 3000 --watch --json` | JSON event stream | Re-checks ports continuously and emits snapshot events |
 | Changed-only watch mode | `ferman 3000 --watch --changed-only --json` | JSON event stream | Emits a new watch snapshot only when the result changes |
+| MCP wrapper | `npx -p ferman ferman-mcp` | MCP stdio server | Exposes ferman operations as MCP tools for agent integrations |
 | TOON mode | `ferman 3000 --toon` | Machine-readable TOON | Returns compact structured output optimized for LLM-facing workflows |
 | Free port no-op | `ferman 3000` | Human-readable | Reports that the port is already free and exits successfully |
 | Invalid input handling | `ferman abc`, `ferman abc --json`, `ferman abc --toon` | Error, JSON, or TOON | Rejects invalid port input with a deterministic exit code |

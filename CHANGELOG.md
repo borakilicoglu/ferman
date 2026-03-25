@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project follows Semantic Versioning.
 
+## [0.1.5] - 2026-03-25
+
+### Added
+
+- `ferman-mcp`, a stdio MCP wrapper over the existing port and process operations
+- MCP tools for port inspection, release, doctor scans, Node.js process listing, Node.js port listing, and output schema retrieval
+
+### Changed
+
+- Expanded smoke coverage to verify the MCP entrypoint starts cleanly
+- Updated README and docs to document MCP-based agent integration
+
 ## [0.1.4] - 2026-03-25
 
 ### Added

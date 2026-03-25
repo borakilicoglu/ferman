@@ -43,6 +43,8 @@ That’s it.
 - shows what it is
 - lets you safely terminate it
 - works across macOS, Linux, and Windows
+- JSON and TOON output for automation and LLM workflows
+- includes an MCP wrapper for agent tool integration
 
 ---
 
@@ -104,6 +106,12 @@ Machine-readable output:
 npx ferman 3000 --json
 ```
 
+LLM-friendly structured output:
+
+```bash
+npx ferman 3000 --toon
+```
+
 Node.js processes with listening ports:
 
 ```bash
@@ -134,9 +142,26 @@ Watch mode, only on change:
 npx ferman 3000 --watch --changed-only --json
 ```
 
+MCP wrapper over stdio:
+
+```bash
+npx -p ferman ferman-mcp
+```
+
+Exposed MCP tools:
+
+- `inspect_ports`
+- `release_ports`
+- `doctor_ports`
+- `list_node_processes`
+- `list_node_ports`
+- `get_output_schema`
+
 ---
 
 ## 🧾 Example Output
+
+JSON:
 
 ```json
 {
@@ -149,19 +174,33 @@ npx ferman 3000 --watch --changed-only --json
 }
 ```
 
+TOON:
+
+```toon
+ok: true
+code: PORT_RELEASED
+port: 3000
+busy: true
+processes[1]{pid,name}:
+  1234,node
+action: killed
+message: Port released.
+```
+
 ---
 
 ## ⚙️ Features
 
 - cross-platform (macOS, Linux, Windows)
 - safe process termination
-- JSON output for automation
+- JSON and TOON output for automation and LLM workflows
 - Node.js process and port visibility
 - optional self-inclusion for node-oriented diagnostics
 - multi-port support
 - plan & dry modes
 - watch mode
 - changed-only watch mode
+- MCP wrapper for agent tool integration
 - predictable exit codes
 - AI / agent-friendly output
 
