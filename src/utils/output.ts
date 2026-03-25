@@ -6,6 +6,7 @@ import type {
 } from "../types";
 import type { NodeProcessListResult } from "../nodeProcesses";
 import type { NodePortListResult } from "../nodePorts";
+import type { PortListResult } from "../portList";
 
 export function cleanupToonOutput(output: string): string {
   return output
@@ -17,6 +18,10 @@ export function cleanupToonOutput(output: string): string {
 
 function isNodeProcessListResult(result: FermanResult): result is NodeProcessListResult {
   return "count" in result && result.code === "NODE_PROCESSES_LISTED";
+}
+
+function isPortListResult(result: FermanResult): result is PortListResult {
+  return "count" in result && result.code === "PORTS_LISTED";
 }
 
 function isNodePortListResult(result: FermanResult): result is NodePortListResult {
@@ -49,6 +54,11 @@ function printSingleHumanResult(result: CommandResult): void {
 }
 
 export function printHumanResult(result: FermanResult): void {
+  if (isPortListResult(result)) {
+    printPortListHuman(result);
+    return;
+  }
+
   if (isNodeProcessListResult(result)) {
     printNodeProcessesHuman(result);
     return;
@@ -81,6 +91,27 @@ function printNodeProcessesHuman(result: NodeProcessListResult): void {
   for (const process of result.processes) {
     const suffix = process.command ? ` - ${process.command}` : "";
     console.log(`- ${process.name} (${process.pid})${suffix}`);
+  }
+}
+
+function printPortListHuman(result: PortListResult): void {
+  console.log(result.message);
+
+  if (result.count > 0) {
+    console.log(
+      result.count === 1
+        ? "1 listening port was found."
+        : `${String(result.count)} listening ports were found.`
+    );
+  }
+
+  for (const entry of result.ports) {
+    const processes = entry.processes
+      .map((processInfo) =>
+        processInfo.name ? `${processInfo.name} (${processInfo.pid})` : `PID ${processInfo.pid}`
+      )
+      .join(", ");
+    console.log(`- ${entry.port}: ${processes}`);
   }
 }
 

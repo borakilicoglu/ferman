@@ -2,6 +2,7 @@ export type ActionResult = "none" | "inspected" | "killed";
 import type { ErrorCode, SuccessCode } from "./utils/errors";
 import type { NodeProcessListResult } from "./nodeProcesses";
 import type { NodePortListResult } from "./nodePorts";
+import type { PortListResult } from "./portList";
 
 export interface ProcessInfo {
   pid: number;
@@ -66,6 +67,7 @@ export interface CliOptions {
   ports: number[];
   common: boolean;
   doctor: boolean;
+  list: boolean;
   jsonSchema: boolean;
   node: boolean;
   nodePorts: boolean;
@@ -82,5 +84,6 @@ export interface CliOptions {
 export type FermanResult =
   | CommandResult
   | BatchCommandResult
+  | PortListResult
   | NodeProcessListResult
   | NodePortListResult;

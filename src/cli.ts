@@ -2,6 +2,7 @@ import { runFermanBatch } from "./index";
 import type { CliOptions, WatchEvent } from "./types";
 import { listNodeProcesses } from "./nodeProcesses";
 import { listNodePorts } from "./nodePorts";
+import { listPorts } from "./portList";
 import { COMMON_PORTS } from "./utils/commonPorts";
 import { getJsonSchema } from "./utils/schema";
 import { FermanError, normalizeError } from "./utils/errors";
@@ -24,6 +25,7 @@ Inspect and free busy ports instantly.
 
 Usage:
   ferman <port...> [--common] [--doctor] [--force] [--dry] [--plan] [--watch] [--changed-only] [--json | --toon]
+  ferman --list [--json | --toon]
   ferman --node [--self] [--json | --toon]
   ferman --node-ports [--self] [--json | --toon]
   ferman --json-schema
@@ -31,6 +33,7 @@ Usage:
 Options:
   --common  Inspect common local development ports
   --doctor  Diagnose common local development ports and summarize their state
+  --list    List active listening ports
   --node    List active Node.js processes
   --node-ports  List active Node.js processes with listening ports
   --self    Include the current ferman invocation in node-oriented listings
@@ -49,6 +52,7 @@ Options:
 function parseArgs(argv: string[]): CliOptions {
   const common = argv.includes("--common");
   const doctor = argv.includes("--doctor");
+  const list = argv.includes("--list");
   const jsonSchema = argv.includes("--json-schema");
   const node = argv.includes("--node");
   const nodePorts = argv.includes("--node-ports");
@@ -69,15 +73,15 @@ function parseArgs(argv: string[]): CliOptions {
 
   const positional = argv.filter((arg) => !arg.startsWith("-"));
 
-  if ((common || doctor || node || nodePorts) && positional.length > 0) {
+  if ((common || doctor || list || node || nodePorts) && positional.length > 0) {
     throw new FermanError(
-      "Use either explicit ports or --common/--doctor/--node/--node-ports, not both.",
+      "Use either explicit ports or --common/--doctor/--list/--node/--node-ports, not both.",
       "INVALID_ARGUMENTS",
       2
     );
   }
 
-  if (jsonSchema && (common || doctor || node || nodePorts || positional.length > 0)) {
+  if (jsonSchema && (common || doctor || list || node || nodePorts || positional.length > 0)) {
     throw new FermanError(
       "Use --json-schema on its own without ports or scan modes.",
       "INVALID_ARGUMENTS",
@@ -93,9 +97,9 @@ function parseArgs(argv: string[]): CliOptions {
     );
   }
 
-  if ((node || nodePorts) && (force || dry || plan || watch || changedOnly)) {
+  if ((list || node || nodePorts) && (force || dry || plan || watch || changedOnly)) {
     throw new FermanError(
-      "Use --node and --node-ports without --force, --dry, --plan, --watch, or --changed-only.",
+      "Use --list, --node, and --node-ports without --force, --dry, --plan, --watch, or --changed-only.",
       "INVALID_ARGUMENTS",
       2
     );
@@ -109,7 +113,7 @@ function parseArgs(argv: string[]): CliOptions {
     );
   }
 
-  if (!jsonSchema && !common && !doctor && !node && !nodePorts && positional.length === 0) {
+  if (!jsonSchema && !common && !doctor && !list && !node && !nodePorts && positional.length === 0) {
     throw new FermanError("Port is required.", "INVALID_PORT", 2);
   }
 
@@ -141,6 +145,7 @@ function parseArgs(argv: string[]): CliOptions {
     ports: jsonSchema ? [] : common || doctor ? COMMON_PORTS : positional.map((value) => parsePort(value)),
     common,
     doctor,
+    list,
     jsonSchema,
     node,
     nodePorts,
@@ -231,6 +236,21 @@ async function main(): Promise<void> {
   try {
     if (options.node) {
       const result = await listNodeProcesses({ includeSelf: options.self });
+
+      if (options.json) {
+        printJsonResult(result);
+      } else if (options.toon) {
+        await printToonResult(result);
+      } else {
+        printHumanResult(result);
+      }
+
+      process.exit(0);
+      return;
+    }
+
+    if (options.list) {
+      const result = await listPorts();
 
       if (options.json) {
         printJsonResult(result);

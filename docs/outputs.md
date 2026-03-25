@@ -98,6 +98,36 @@ Example batch result:
 }
 ```
 
+## Port List Output
+
+Use `--list` to inventory active listening ports across the system:
+
+```bash
+ferman --list --json
+```
+
+Example result:
+
+```json
+{
+  "ok": true,
+  "code": "PORTS_LISTED",
+  "ports": [
+    {
+      "port": 3000,
+      "processes": [
+        {
+          "pid": 1234,
+          "name": "node"
+        }
+      ]
+    }
+  ],
+  "count": 1,
+  "message": "Listed active listening ports."
+}
+```
+
 ## Node Process Output
 
 Use `--node` to list active Node.js processes:

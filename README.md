@@ -44,6 +44,7 @@ That’s it.
 - lets you safely terminate it
 - works across macOS, Linux, and Windows
 - JSON and TOON output for automation and LLM workflows
+- listening port inventory
 - includes an MCP wrapper for agent tool integration
 
 ---
@@ -96,6 +97,24 @@ Multiple ports:
 npx ferman 3000 5173 5432
 ```
 
+List active listening ports:
+
+```bash
+npx ferman --list
+```
+
+List active Node.js processes:
+
+```bash
+npx ferman --node
+```
+
+List active Node.js processes with listening ports:
+
+```bash
+npx ferman --node-ports
+```
+
 ---
 
 ## 🤖 For Scripts, CI & AI
@@ -104,6 +123,12 @@ Machine-readable output:
 
 ```bash
 npx ferman 3000 --json
+```
+
+Listening ports inventory:
+
+```bash
+npx ferman --list --json
 ```
 
 LLM-friendly structured output:
@@ -193,7 +218,9 @@ message: Port released.
 
 - cross-platform (macOS, Linux, Windows)
 - safe process termination
+- port inspection and release
 - JSON and TOON output for automation and LLM workflows
+- listening port inventory
 - Node.js process and port visibility
 - optional self-inclusion for node-oriented diagnostics
 - multi-port support

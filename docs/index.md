@@ -36,6 +36,7 @@ It is designed to work well for both humans and AI agents:
 - `--dry` for inspection only
 - `--json` for scripts, CI, and agents
 - `--toon` for compact LLM-oriented structured output
+- `--list` for active listening port inventory
 - multi-port support for batch inspection
 - `--common` for common local development ports
 - `--plan` for recommendations without termination
@@ -72,6 +73,7 @@ Core commands:
 ferman 3000
 ferman 3000 --force
 ferman 3000 --dry
+ferman --list --json
 ferman 3000 --json
 ferman 3000 --toon
 ferman 3000 5173 5432 --json
@@ -94,6 +96,7 @@ Capabilities matrix:
 | Inspect a port | `ferman 3000` | Human-readable | Finds the process and asks before termination |
 | Force release | `ferman 3000 --force` | Human-readable | Finds the process and terminates without confirmation |
 | Dry inspection | `ferman 3000 --dry` | Human-readable | Finds the process and does not terminate anything |
+| Port list | `ferman --list --json` | Machine-readable JSON | Lists active listening ports with their bound processes |
 | Multi-port support | `ferman 3000 5173 5432 --json` | Machine-readable JSON | Returns batch results and a summary for multiple ports |
 | Common-port scan | `ferman --common --json` | Machine-readable JSON | Scans a stable set of common local development ports |
 | Plan mode | `ferman --plan --json` | Machine-readable JSON | Returns a recommended next action without terminating processes |

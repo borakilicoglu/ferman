@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project follows Semantic Versioning.
 
+## [0.1.7] - 2026-03-25
+
+### Added
+
+- `--list` for listing active listening ports across the system
+- Parser tests for Unix and Windows listening-port inventory output
+
+### Changed
+
+- Decoded escaped process names in port-list output on Unix-like systems
+- Expanded README and docs to cover listening-port inventory mode
+
 ## [0.1.6] - 2026-03-25
 
 ### Added

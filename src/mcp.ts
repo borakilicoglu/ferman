@@ -69,6 +69,7 @@ async function runNonInteractiveBatch(
     ports: overrides.ports,
     common: overrides.common ?? false,
     doctor: overrides.doctor ?? false,
+    list: false,
     jsonSchema: false,
     node: false,
     nodePorts: false,
