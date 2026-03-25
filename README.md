@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://www.npmjs.com/package/ferman"><img src="https://img.shields.io/npm/v/ferman.svg" alt="npm version" /></a>
-  <a href="https://www.npmjs.com/package/ferman"><img src="https://img.shields.io/npm/dm/ferman.svg" alt="npm downloads" /></a>
+  <a href="https://www.npmjs.com/package/ferman"><img src="https://img.shields.io/npm/dt/ferman.svg" alt="npm total downloads" /></a>
   <a href="./LICENSE"><img src="https://img.shields.io/npm/l/ferman.svg" alt="license" /></a>
   <a href="https://borakilicoglu.github.io/ferman/"><img src="https://img.shields.io/badge/docs-github_pages-0b6b57" alt="docs" /></a>
   <a href="https://www.npmjs.com/package/ferman"><img src="https://img.shields.io/node/v/ferman.svg" alt="node version" /></a>

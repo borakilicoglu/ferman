@@ -9,7 +9,11 @@
     "process",
     "node",
     "ai",
-    "llm"
+    "automation",
+    "toon",
+    "llm",
+    "terminal",
+    "developer-tools"
   ],
   "homepage": "https://github.com/borakilicoglu/ferman#readme",
   "repository": {
