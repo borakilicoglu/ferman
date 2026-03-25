@@ -98,6 +98,48 @@ Example batch result:
 }
 ```
 
+## Node Process Output
+
+Use `--node` to list active Node.js processes:
+
+```bash
+ferman --node --json
+```
+
+Use `--self` when you explicitly want the current `ferman` invocation and its wrapper processes to remain visible:
+
+```bash
+ferman --node --self --json
+```
+
+Use `--node-ports` to list active Node.js processes that currently expose listening ports:
+
+```bash
+ferman --node-ports --json
+```
+
+Example `--node-ports` result:
+
+```json
+{
+  "ok": true,
+  "code": "NODE_PORTS_LISTED",
+  "processes": [
+    {
+      "pid": 1234,
+      "name": "node",
+      "command": "node server.js",
+      "ports": [
+        3000,
+        9229
+      ]
+    }
+  ],
+  "count": 1,
+  "message": "Listed active Node.js processes with listening ports."
+}
+```
+
 ## Plan Mode
 
 Plan mode adds a recommendation without terminating anything:
@@ -177,6 +219,12 @@ Example watch event:
 }
 ```
 
+Use `--changed-only` with watch mode when you want quieter output and only care about state transitions:
+
+```bash
+ferman 3000 --watch --changed-only --json
+```
+
 ## Selection Rules
 
 - use `--json` when the consumer expects standard structured data
@@ -184,6 +232,7 @@ Example watch event:
 - do not combine `--json` and `--toon` in the same command
 - use `--json-schema` when an integration needs a formal contract
 - use `--watch` when a consumer needs repeated snapshots over time
+- use `--changed-only` with `--watch` when a consumer only needs changes, not every polling cycle
 
 ## Exit Codes
 

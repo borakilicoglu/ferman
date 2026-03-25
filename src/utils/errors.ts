@@ -4,7 +4,8 @@ export type SuccessCode =
   | "OPERATION_CANCELLED"
   | "PORT_RELEASED"
   | "BATCH_COMPLETED"
-  | "NODE_PROCESSES_LISTED";
+  | "NODE_PROCESSES_LISTED"
+  | "NODE_PORTS_LISTED";
 
 export type ErrorCode =
   | "INVALID_ARGUMENTS"

@@ -1,100 +1,142 @@
 <p align="center">
-  <img src="./assets/logo.svg" alt="ferman logo" width="132" height="132" />
+  <img src="./assets/logo.svg" alt="ferman logo" width="140" />
 </p>
 
 <h1 align="center">ferman</h1>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/ferman"><img src="https://img.shields.io/npm/v/ferman.svg" alt="npm version" /></a>
-  <a href="https://www.npmjs.com/package/ferman"><img src="https://img.shields.io/npm/dt/ferman.svg" alt="npm total downloads" /></a>
-  <a href="./LICENSE"><img src="https://img.shields.io/npm/l/ferman.svg" alt="license" /></a>
-  <a href="https://borakilicoglu.github.io/ferman/"><img src="https://img.shields.io/badge/docs-github_pages-0b6b57" alt="docs" /></a>
-  <a href="https://www.npmjs.com/package/ferman"><img src="https://img.shields.io/node/v/ferman.svg" alt="node version" /></a>
+  <b>A CLI tool to inspect, diagnose, and manage local ports and processes with predictable output for humans and AI agents.</b>
 </p>
 
 <p align="center">
-  Inspect ports, identify processes, and free busy ports with predictable CLI output.
+  <a href="https://www.npmjs.com/package/ferman"><img src="https://img.shields.io/npm/v/ferman.svg" /></a>
+  <a href="https://www.npmjs.com/package/ferman"><img src="https://img.shields.io/npm/dt/ferman.svg" /></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/npm/l/ferman.svg" /></a>
 </p>
 
-<p align="center">
-  <strong>The hands of AI.</strong>
-</p>
+---
 
-<p align="center">
-  <code>npx ferman 3000</code>
-</p>
+## ⚡ What is ferman?
 
-## Overview
+`ferman` is a CLI tool that tells you:
 
-`ferman` is a small cross-platform DevOps CLI for identifying which process is using a port and releasing it safely when needed. It is designed for both humans and AI agents, with structured machine output, stable error codes, and predictable exit semantics.
+👉 what’s running on a port  
+👉 and frees it instantly
 
-## Install
+No guessing. No digging. No manual killing.
 
-Use instantly with `npx`:
+---
+
+## 🚀 Quick Start
 
 ```bash
 npx ferman 3000
 ```
 
-Install globally for repeated local use:
+That’s it.
+
+---
+
+## 🧠 What it does
+
+- finds the process using a port
+- shows what it is
+- lets you safely terminate it
+- works across macOS, Linux, and Windows
+
+---
+
+## 🔥 Why use it?
+
+Every dev hits this:
 
 ```bash
-npm install -g ferman
-ferman 3000
+Error: port 3000 already in use
 ```
 
-Install locally for development:
+Instead of:
+
+- searching PID
+- running multiple commands
+- guessing processes
+
+👉 just run:
 
 ```bash
-npm install
+npx ferman 3000
 ```
 
-Run the local CLI during development:
+---
+
+## ⚡ Common Usage
+
+Inspect a port:
 
 ```bash
-npm run dev -- 3000 --dry
+npx ferman 3000
 ```
 
-## Tools
-
-Core commands:
+Force kill:
 
 ```bash
-ferman 3000
-ferman 3000 --force
-ferman 3000 --dry
-ferman 3000 --json
-ferman 3000 --toon
-ferman 3000 5173 5432 --json
-ferman --common --json
-ferman --plan --json
-ferman --doctor --json
-ferman --node --json
-ferman --json-schema
-ferman 3000 --watch --json
-ferman 3000 --toon
+npx ferman 3000 --force
 ```
 
-Capabilities matrix:
+Dry run:
 
-| Capability | Command | Output | Action |
-| --- | --- | --- | --- |
-| Inspect a port | `ferman 3000` | Human-readable | Finds the process and asks before termination |
-| Force release | `ferman 3000 --force` | Human-readable | Finds the process and terminates without confirmation |
-| Dry inspection | `ferman 3000 --dry` | Human-readable | Finds the process and does not terminate anything |
-| Multi-port support | `ferman 3000 5173 5432 --json` | Machine-readable JSON | Returns batch results and a summary for multiple ports |
-| Common-port scan | `ferman --common --json` | Machine-readable JSON | Scans a stable set of common local development ports |
-| Plan mode | `ferman 3000 --plan --json` | Machine-readable JSON | Returns a recommendation without terminating processes |
-| Doctor mode | `ferman --doctor --json` | Machine-readable JSON | Returns a local development port diagnosis and summary |
-| Node process listing | `ferman --node --json` | Machine-readable JSON | Lists active Node.js processes with PID and command data |
-| JSON mode | `ferman 3000 --json` | Machine-readable JSON | Returns structured output for scripts, CI, and AI agents |
-| JSON Schema | `ferman --json-schema` | Machine-readable JSON | Prints the JSON Schema for structured output consumers |
-| Watch mode | `ferman 3000 --watch --json` | JSON event stream | Re-checks ports continuously and emits snapshot events |
-| TOON mode | `ferman 3000 --toon` | Machine-readable TOON | Returns compact structured output optimized for LLM-facing workflows |
-| Free port no-op | `ferman 3000` | Human-readable | Reports that the port is already free and exits successfully |
-| Invalid input handling | `ferman abc`, `ferman abc --json`, `ferman abc --toon` | Error, JSON, or TOON | Rejects invalid port input with a deterministic exit code |
+```bash
+npx ferman 3000 --dry
+```
 
-Example JSON output:
+Multiple ports:
+
+```bash
+npx ferman 3000 5173 5432
+```
+
+---
+
+## 🤖 For Scripts, CI & AI
+
+Machine-readable output:
+
+```bash
+npx ferman 3000 --json
+```
+
+Node.js processes with listening ports:
+
+```bash
+npx ferman --node-ports --json
+```
+
+Include the current `ferman` process in node listings:
+
+```bash
+npx ferman --node --self --json
+```
+
+Plan mode (no kill, just recommendation):
+
+```bash
+npx ferman 3000 --plan --json
+```
+
+Watch mode:
+
+```bash
+npx ferman 3000 --watch --json
+```
+
+Watch mode, only on change:
+
+```bash
+npx ferman 3000 --watch --changed-only --json
+```
+
+---
+
+## 🧾 Example Output
 
 ```json
 {
@@ -102,140 +144,65 @@ Example JSON output:
   "code": "PORT_RELEASED",
   "port": 3000,
   "busy": true,
-  "processes": [
-    {
-      "pid": 1234,
-      "name": "node"
-    }
-  ],
   "action": "killed",
   "message": "Port released."
 }
 ```
 
-Example plan output:
+---
 
-```json
-{
-  "ok": true,
-  "code": "PORT_INSPECTED",
-  "port": 3000,
-  "busy": true,
-  "processes": [
-    {
-      "pid": 1234,
-      "name": "node"
-    }
-  ],
-  "action": "inspected",
-  "message": "Plan mode active. No processes were terminated.",
-  "recommendation": {
-    "action": "terminate",
-    "reason": "A single process is using the port, so targeted termination is a reasonable next step.",
-    "risk": "low"
-  }
-}
-```
+## ⚙️ Features
 
-Example batch output:
+- cross-platform (macOS, Linux, Windows)
+- safe process termination
+- JSON output for automation
+- Node.js process and port visibility
+- optional self-inclusion for node-oriented diagnostics
+- multi-port support
+- plan & dry modes
+- watch mode
+- changed-only watch mode
+- predictable exit codes
+- AI / agent-friendly output
 
-```json
-{
-  "ok": true,
-  "code": "BATCH_COMPLETED",
-  "ports": [
-    {
-      "ok": true,
-      "code": "PORT_FREE",
-      "port": 3000,
-      "busy": false,
-      "processes": [],
-      "action": "none",
-      "message": "Port is already free."
-    }
-  ],
-  "summary": {
-    "total": 1,
-    "busy": 0,
-    "free": 1,
-    "released": 0,
-    "inspected": 0
-  }
-}
-```
+---
 
-Example TOON output:
-
-```text
-ok: true
-code: PORT_RELEASED
-port: 3000
-busy: true
-processes[1]{pid,name}:
-  1234,node
-action: killed
-message: Port released.
-```
-
-Exit codes:
-
-- `0`: success
-- `1`: runtime error
-- `2`: invalid input
-
-Machine error codes:
-
-- `INVALID_ARGUMENTS`
-- `INVALID_PORT`
-- `OUTPUT_MODE_CONFLICT`
-- `UNSUPPORTED_PLATFORM`
-- `COMMAND_UNAVAILABLE`
-- `PERMISSION_DENIED`
-- `PROCESS_NOT_FOUND`
-- `KILL_FAILED`
-- `INSPECTION_FAILED`
-- `UNKNOWN_ERROR`
-
-Platform support:
-
-- macOS and Linux: `lsof`, `ps`
-- Windows: `netstat`, `tasklist`, `taskkill`
-
-Verification status:
-
-- macOS: verified in a live runtime environment
-- Linux: implemented and parser-tested
-- Windows: implemented and parser-tested
-
-Local tooling:
+## 📦 Install
 
 ```bash
-npm run lint
-npm test
-npm run typecheck
-npm run build
-npm run smoke
-npm run release:check
+npm install -g ferman
 ```
 
-## Sponsor
+or just use:
 
-If `ferman` helps you keep local development moving, you can support ongoing maintenance through GitHub Sponsors:
+```bash
+npx ferman 3000
+```
 
-- https://github.com/sponsors/borakilicoglu
+---
 
-## Support
+## 🧠 Philosophy
 
-For bugs, regressions, and feature requests, use GitHub Issues:
+> Dev tools should be fast, predictable, and boring.
 
-- https://github.com/borakilicoglu/ferman/issues
+`ferman` keeps local ports and processes observable and manageable  
+without friction.
 
-## Resources
+---
 
-- Website: https://borakilicoglu.github.io/ferman/
-- GitHub repo: https://github.com/borakilicoglu/ferman
-- Official npm package: https://www.npmjs.com/package/ferman
+## ❤️ Support
+
+If this tool saves you time:
+
+⭐ Star the repo  
+☕ Support via GitHub Sponsors
+
+https://github.com/sponsors/borakilicoglu
+
+---
+
+## 🔗 Links
+
+- GitHub: https://github.com/borakilicoglu/ferman
+- npm: https://www.npmjs.com/package/ferman
 - Docs: https://borakilicoglu.github.io/ferman/
-- Contributing: https://github.com/borakilicoglu/ferman/blob/main/CONTRIBUTING.md
-- Releases: https://github.com/borakilicoglu/ferman/releases
-- License: https://github.com/borakilicoglu/ferman/blob/main/LICENSE

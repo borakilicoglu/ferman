@@ -5,9 +5,14 @@ import type {
   WatchEvent
 } from "../types";
 import type { NodeProcessListResult } from "../nodeProcesses";
+import type { NodePortListResult } from "../nodePorts";
 
 function isNodeProcessListResult(result: FermanResult): result is NodeProcessListResult {
   return "count" in result && result.code === "NODE_PROCESSES_LISTED";
+}
+
+function isNodePortListResult(result: FermanResult): result is NodePortListResult {
+  return "count" in result && result.code === "NODE_PORTS_LISTED";
 }
 
 function printSingleHumanResult(result: CommandResult): void {
@@ -41,6 +46,11 @@ export function printHumanResult(result: FermanResult): void {
     return;
   }
 
+  if (isNodePortListResult(result)) {
+    printNodePortsHuman(result);
+    return;
+  }
+
   if ("ports" in result) {
     for (const [index, item] of result.ports.entries()) {
       if (index > 0) {
@@ -63,6 +73,15 @@ function printNodeProcessesHuman(result: NodeProcessListResult): void {
   for (const process of result.processes) {
     const suffix = process.command ? ` - ${process.command}` : "";
     console.log(`- ${process.name} (${process.pid})${suffix}`);
+  }
+}
+
+function printNodePortsHuman(result: NodePortListResult): void {
+  console.log(result.message);
+
+  for (const process of result.processes) {
+    const suffix = process.command ? ` - ${process.command}` : "";
+    console.log(`- ${process.name} (${process.pid}) ports: ${process.ports.join(", ")}${suffix}`);
   }
 }
 

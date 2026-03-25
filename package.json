@@ -1,7 +1,7 @@
 {
   "name": "ferman",
   "version": "0.1.3",
-  "description": "Inspect ports, identify processes, and free busy ports with predictable CLI output.",
+  "description": "A CLI tool to inspect, diagnose, and manage local ports and processes with predictable output for humans and AI agents.",
   "keywords": [
     "cli",
     "devops",
@@ -47,7 +47,7 @@
     "prepare": "husky",
     "prepublishOnly": "npm run test && npm run build",
     "release:check": "npm run lint && npm run test && npm run typecheck && npm run build && npm run smoke && npm_config_cache=.npm-cache npm pack --dry-run --ignore-scripts",
-    "smoke": "npm run build && node dist/cli.js --help && node dist/cli.js 65535 --dry --json && node dist/cli.js 65535 --dry --toon",
+    "smoke": "npm run build && node dist/cli.js --help && node dist/cli.js 65535 --dry --json && node dist/cli.js 65535 --dry --toon && node dist/cli.js --node --json && node dist/cli.js --node-ports --json",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit -p tsconfig.json",

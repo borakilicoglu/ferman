@@ -14,21 +14,56 @@ export interface NodeProcessListResult {
   message: string;
 }
 
+function normalizeCommand(command?: string): string | undefined {
+  if (!command) {
+    return undefined;
+  }
+
+  const normalized = command.replace(/\s+/g, " ").trim();
+  return normalized || undefined;
+}
+
+function shouldIncludeNodeProcess(processInfo: NodeProcessInfo): boolean {
+  if (processInfo.pid === process.pid) {
+    return false;
+  }
+
+  const command = processInfo.command ?? "";
+
+  if (/\b(?:npm|npx)\s+(?:exec|run)\s+ferman\b/i.test(command)) {
+    return false;
+  }
+
+  if (/\bferman\b.+\b--node(?:-ports)?\b/i.test(command)) {
+    return false;
+  }
+
+  if (/(?:^|\s)dist[\\/]cli\.js\b.*\b--node(?:-ports)?\b/i.test(command)) {
+    return false;
+  }
+
+  if (/[\\/]ferman(?:\.cmd|\.exe)?\b/i.test(command)) {
+    return false;
+  }
+
+  return true;
+}
+
 export function parseUnixPsOutput(output: string): NodeProcessInfo[] {
   const items: Array<NodeProcessInfo | undefined> = output
     .split(/\r?\n/)
     .map((line) => line.trim())
     .filter(Boolean)
     .map((line) => {
-      const match = line.match(/^(\d+)\s+(.+)$/);
+      const match = line.match(/^(\d+)\s+(\S+)\s+(.+)$/);
       if (!match) {
         return undefined;
       }
 
       return {
         pid: Number(match[1]),
-        name: "node",
-        command: match[2]
+        name: match[2],
+        command: normalizeCommand(match[3])
       };
     });
 
@@ -56,7 +91,16 @@ export function parseWindowsTasklistOutput(output: string): NodeProcessInfo[] {
   return items.filter((value): value is NodeProcessInfo => value !== undefined);
 }
 
-export async function listNodeProcesses(platform = process.platform): Promise<NodeProcessListResult> {
+export interface ListNodeProcessOptions {
+  platform?: NodeJS.Platform;
+  includeSelf?: boolean;
+}
+
+export async function listNodeProcesses(
+  options: ListNodeProcessOptions = {}
+): Promise<NodeProcessListResult> {
+  const platform = options.platform ?? process.platform;
+  const includeSelf = options.includeSelf ?? false;
   let processes: NodeProcessInfo[] = [];
 
   if (platform === "win32") {
@@ -66,10 +110,17 @@ export async function listNodeProcesses(platform = process.platform): Promise<No
     const result = await runCommand("ps", ["-axo", "pid=,comm=,args="]);
     processes = parseUnixPsOutput(result.stdout).filter(
       (processInfo) =>
+        processInfo.name === "node" ||
+        processInfo.name === "tsx" ||
+        processInfo.name === "ts-node" ||
         /\bnode(\s|$)/i.test(processInfo.command ?? "") ||
         /\btsx(\s|$)/i.test(processInfo.command ?? "") ||
         /\bts-node(\s|$)/i.test(processInfo.command ?? "")
     );
+  }
+
+  if (!includeSelf) {
+    processes = processes.filter(shouldIncludeNodeProcess);
   }
 
   return {

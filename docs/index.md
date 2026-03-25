@@ -40,8 +40,12 @@ It is designed to work well for both humans and AI agents:
 - `--common` for common local development ports
 - `--plan` for recommendations without termination
 - `--doctor` for environment-level diagnosis
+- `--node` for active Node.js process listing
+- `--node-ports` for active Node.js processes with listening ports
+- `--self` to include the current `ferman` invocation in node-oriented listings
 - `--json-schema` for integration-safe contracts
 - `--watch` for continuous re-checking
+- `--changed-only` for quieter watch output
 - predictable exit codes for automation
 
 ## Install
@@ -74,8 +78,11 @@ ferman --common --json
 ferman --plan --json
 ferman --doctor --json
 ferman --node --json
+ferman --node --self --json
+ferman --node-ports --json
 ferman --json-schema
 ferman 3000 --watch --json
+ferman 3000 --watch --changed-only --json
 ```
 
 Capabilities matrix:
@@ -90,9 +97,12 @@ Capabilities matrix:
 | Plan mode | `ferman --plan --json` | Machine-readable JSON | Returns a recommended next action without terminating processes |
 | Doctor mode | `ferman --doctor --json` | Machine-readable JSON | Returns a local development diagnosis and summary |
 | Node process listing | `ferman --node --json` | Machine-readable JSON | Lists active Node.js processes with PID and command data |
+| Node process listing with self | `ferman --node --self --json` | Machine-readable JSON | Includes the current `ferman` invocation in the process list |
+| Node process port listing | `ferman --node-ports --json` | Machine-readable JSON | Lists active Node.js processes together with listening ports |
 | JSON mode | `ferman 3000 --json` | Machine-readable JSON | Returns structured output for scripts, CI, and AI agents |
 | JSON Schema | `ferman --json-schema` | Machine-readable JSON | Prints the JSON Schema for structured output consumers |
 | Watch mode | `ferman 3000 --watch --json` | JSON event stream | Re-checks ports continuously and emits snapshot events |
+| Changed-only watch mode | `ferman 3000 --watch --changed-only --json` | JSON event stream | Emits a new watch snapshot only when the result changes |
 | TOON mode | `ferman 3000 --toon` | Machine-readable TOON | Returns compact structured output optimized for LLM-facing workflows |
 | Free port no-op | `ferman 3000` | Human-readable | Reports that the port is already free and exits successfully |
 | Invalid input handling | `ferman abc`, `ferman abc --json`, `ferman abc --toon` | Error, JSON, or TOON | Rejects invalid port input with a deterministic exit code |

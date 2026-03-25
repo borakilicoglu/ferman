@@ -35,9 +35,15 @@ describe("runFerman", () => {
       ports: [3000],
       common: false,
       doctor: false,
+      jsonSchema: false,
+      node: false,
+      nodePorts: false,
+      self: false,
       force: false,
       dry: false,
       plan: false,
+      watch: false,
+      changedOnly: false,
       json: false,
       toon: false
     });
@@ -69,9 +75,15 @@ describe("runFerman", () => {
       ports: [3000],
       common: false,
       doctor: false,
+      jsonSchema: false,
+      node: false,
+      nodePorts: false,
+      self: false,
       force: false,
       dry: true,
       plan: false,
+      watch: false,
+      changedOnly: false,
       json: true,
       toon: false
     });
@@ -104,9 +116,15 @@ describe("runFerman", () => {
       ports: [3000],
       common: false,
       doctor: false,
+      jsonSchema: false,
+      node: false,
+      nodePorts: false,
+      self: false,
       force: true,
       dry: false,
       plan: false,
+      watch: false,
+      changedOnly: false,
       json: false,
       toon: false
     });
@@ -139,9 +157,15 @@ describe("runFerman", () => {
       ports: [3000],
       common: false,
       doctor: false,
+      jsonSchema: false,
+      node: false,
+      nodePorts: false,
+      self: false,
       force: false,
       dry: false,
       plan: false,
+      watch: false,
+      changedOnly: false,
       json: false,
       toon: false
     });
@@ -177,9 +201,15 @@ describe("runFerman", () => {
       ports: [3000, 5173],
       common: false,
       doctor: false,
+      jsonSchema: false,
+      node: false,
+      nodePorts: false,
+      self: false,
       force: false,
       dry: true,
       plan: false,
+      watch: false,
+      changedOnly: false,
       json: true,
       toon: false
     });
@@ -230,9 +260,16 @@ describe("runFerman", () => {
     const result = await runFermanBatch({
       ports: [3000],
       common: false,
+      doctor: false,
+      jsonSchema: false,
+      node: false,
+      nodePorts: false,
+      self: false,
       force: false,
       dry: false,
       plan: true,
+      watch: false,
+      changedOnly: false,
       json: true,
       toon: false
     });
@@ -274,9 +311,15 @@ describe("runFerman", () => {
       ports: [3000, 3001],
       common: false,
       doctor: true,
+      jsonSchema: false,
+      node: false,
+      nodePorts: false,
+      self: false,
       force: false,
       dry: true,
       plan: false,
+      watch: false,
+      changedOnly: false,
       json: true,
       toon: false
     });

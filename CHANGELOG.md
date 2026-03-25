@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project follows Semantic Versioning.
 
+## [0.1.4] - 2026-03-25
+
+### Added
+
+- `--node-ports` for listing active Node.js processes together with listening ports
+- `--changed-only` for quieter watch mode output that emits only on result changes
+- `--self` for including the current `ferman` invocation in node-oriented listings
+
+### Changed
+
+- Cleaned `--node` command output by normalizing command strings and filtering self-wrapper noise by default
+- Expanded smoke coverage to include node-oriented commands
+- Updated README and docs to cover the new node and watch workflows
+
 ## [0.1.3] - 2026-03-25
 
 ### Added
