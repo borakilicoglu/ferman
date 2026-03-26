@@ -11,7 +11,7 @@
 <p align="center">
   <a href="https://www.npmjs.com/package/ferman"><img src="https://img.shields.io/npm/v/ferman.svg" /></a>
   <a href="https://www.npmjs.com/package/ferman"><img src="https://img.shields.io/npm/dt/ferman.svg" /></a>
-  <a href="https://packagephobia.com/result?p=ferman"><img src="https://img.shields.io/packagephobia/install/ferman" /></a>
+  <a href="https://packagephobia.com/result?p=ferman"><img src="https://badgen.net/packagephobia/install/ferman" /></a>
   <a href="./LICENSE"><img src="https://img.shields.io/npm/l/ferman.svg" /></a>
 </p>
 

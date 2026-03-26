@@ -11,7 +11,7 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
 - Improved `--plan` recommendations for common app and service port scenarios
 - Expanded `--doctor` diagnosis guidance for likely stale dev loops and multi-process listeners
 - Added watch-mode hints for ports that reappear or stay attached to the same process family
-- Added an install-size badge to the README package metadata row
+- Added a working install-size badge to the README package metadata row
 
 ## [0.1.8] - 2026-03-25
 
