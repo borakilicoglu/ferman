@@ -5,7 +5,7 @@
 <h1 align="center">ferman</h1>
 
 <p align="center">
-  <b>A CLI tool to inspect, diagnose, and manage local ports and processes with predictable output for humans and AI agents.</b>
+  <b>Inspect busy ports, identify the owning process, and release them with predictable output for humans and automation.</b>
 </p>
 
 <p align="center">
@@ -17,63 +17,33 @@
 
 ---
 
-## ⚡ What is ferman?
+## Overview
 
-`ferman` is a CLI tool that tells you:
+`ferman` is a cross-platform CLI for inspecting busy ports, identifying the owning process, and releasing the port safely when needed.
 
-👉 what’s running on a port  
-👉 and frees it instantly
+It is built for:
 
-No guessing. No digging. No manual killing.
+- interactive terminal use with explicit confirmation
+- local debugging of blocked development ports
+- scripts, CI, and agent workflows that need stable machine-readable output
+- MCP integrations over stdio
 
----
+## Quick Start
 
-## 🚀 Quick Start
-
-```bash
-npx ferman 3000
-```
-
-That’s it.
-
----
-
-## 🧠 What it does
-
-- finds the process using a port
-- shows what it is
-- lets you safely terminate it
-- works across macOS, Linux, and Windows
-- JSON and TOON output for automation and LLM workflows
-- listening port inventory
-- process targeting with `--kill-all --name`
-- includes an MCP wrapper for agent tool integration
-
----
-
-## 🔥 Why use it?
-
-Every dev hits this:
-
-```bash
-Error: port 3000 already in use
-```
-
-Instead of:
-
-- searching PID
-- running multiple commands
-- guessing processes
-
-👉 just run:
+Run without installing:
 
 ```bash
 npx ferman 3000
 ```
 
----
+Install globally:
 
-## ⚡ Common Usage
+```bash
+npm install -g ferman
+ferman 3000
+```
+
+## Common Commands
 
 Inspect a port:
 
@@ -81,19 +51,19 @@ Inspect a port:
 npx ferman 3000
 ```
 
-Force kill:
+Release a port without confirmation:
 
 ```bash
 npx ferman 3000 --force
 ```
 
-Dry run:
+Inspect without terminating anything:
 
 ```bash
 npx ferman 3000 --dry
 ```
 
-Multiple ports:
+Inspect multiple ports:
 
 ```bash
 npx ferman 3000 5173 5432
@@ -111,12 +81,6 @@ List active Node.js processes:
 npx ferman --node
 ```
 
-Filter Node.js processes:
-
-```bash
-npx ferman --node --filter mcp
-```
-
 List active Node.js processes with listening ports:
 
 ```bash
@@ -129,53 +93,21 @@ Kill all matching processes by pattern:
 npx ferman --kill-all --name vite
 ```
 
----
+## Automation and MCP
 
-## 🤖 For Scripts, CI & AI
-
-Machine-readable output:
+Structured JSON output:
 
 ```bash
 npx ferman 3000 --json
 ```
 
-Listening ports inventory:
-
-```bash
-npx ferman --list --json
-```
-
-LLM-friendly structured output:
+LLM-oriented TOON output:
 
 ```bash
 npx ferman 3000 --toon
 ```
 
-Node.js processes with listening ports:
-
-```bash
-npx ferman --node-ports --json
-```
-
-Include the current `ferman` process in node listings:
-
-```bash
-npx ferman --node --self --json
-```
-
-Filter node-oriented listings:
-
-```bash
-npx ferman --node --filter mcp --json
-```
-
-Kill matching processes with a custom signal:
-
-```bash
-npx ferman --kill-all --name vite --signal SIGKILL --json
-```
-
-Plan mode (no kill, just recommendation):
+Plan mode without termination:
 
 ```bash
 npx ferman 3000 --plan --json
@@ -185,12 +117,6 @@ Watch mode:
 
 ```bash
 npx ferman 3000 --watch --json
-```
-
-Watch mode, only on change:
-
-```bash
-npx ferman 3000 --watch --changed-only --json
 ```
 
 MCP wrapper over stdio:
@@ -208,9 +134,34 @@ Exposed MCP tools:
 - `list_node_ports`
 - `get_output_schema`
 
----
+## Capabilities
 
-## 🧾 Example Output
+- inspect and release ports on macOS, Linux, and Windows
+- inspect without termination using `--dry` and recommendation-oriented `--plan`
+- list active listening ports with `--list`
+- scan common local development ports with `--common` and `--doctor`
+- list active Node.js processes and their listening ports
+- target matching processes by name or command pattern with `--kill-all --name`
+- emit stable JSON and TOON output for scripts, CI, and LLM-oriented workflows
+- expose CLI operations through `ferman-mcp`
+- keep exit codes and machine-readable error shapes predictable
+
+## When to Use It
+
+Use `ferman` when:
+
+- a local port is busy and you need to see what owns it
+- you want an explicit way to release a blocked port
+- you need structured output for tooling or agents
+- you want a small CLI instead of platform-specific command chains
+
+Do not use `ferman` when:
+
+- you need container orchestration or deployment automation
+- you want implicit destructive cleanup across an entire environment
+- the problem is remote TLS, proxying, or infrastructure rather than local listeners
+
+## Example Output
 
 JSON:
 
@@ -238,64 +189,22 @@ action: killed
 message: Port released.
 ```
 
----
-
-## ⚙️ Features
-
-- cross-platform (macOS, Linux, Windows)
-- safe process termination
-- port inspection and release
-- JSON and TOON output for automation and LLM workflows
-- listening port inventory
-- Node.js process and port visibility
-- process targeting by name or command pattern
-- optional self-inclusion for node-oriented diagnostics
-- configurable kill signals on Unix-like systems
-- multi-port support
-- plan & dry modes
-- watch mode
-- changed-only watch mode
-- MCP wrapper for agent tool integration
-- predictable exit codes
-- AI / agent-friendly output
-
----
-
-## 📦 Install
-
-```bash
-npm install -g ferman
-```
-
-or just use:
-
-```bash
-npx ferman 3000
-```
-
----
-
-## 🧠 Philosophy
+## Philosophy
 
 > Dev tools should be fast, predictable, and boring.
 
-`ferman` keeps local ports and processes observable and manageable  
-without friction.
+`ferman` keeps local ports and processes observable and manageable without hiding destructive actions behind ambiguous automation.
 
----
+## Support
 
-## ❤️ Support
+If `ferman` saves you time:
 
-If this tool saves you time:
-
-⭐ Star the repo  
-☕ Support via GitHub Sponsors
+- Star the repo
+- Support via GitHub Sponsors
 
 https://github.com/sponsors/borakilicoglu
 
----
-
-## 🔗 Links
+## Links
 
 - GitHub: https://github.com/borakilicoglu/ferman
 - npm: https://www.npmjs.com/package/ferman
