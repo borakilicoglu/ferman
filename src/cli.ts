@@ -7,6 +7,7 @@ import { killProcessesByPattern } from "./processes";
 import { COMMON_PORTS } from "./utils/commonPorts";
 import { getJsonSchema } from "./utils/schema";
 import { FermanError, normalizeError } from "./utils/errors";
+import { createWatchHint } from "./utils/watch";
 import {
   printError,
   printHumanResult,
@@ -248,6 +249,7 @@ async function sleep(ms: number): Promise<void> {
 async function runWatchMode(options: CliOptions): Promise<never> {
   let emissionIteration = 0;
   let previousSnapshot: string | undefined;
+  let previousResult: Awaited<ReturnType<typeof runFermanBatch>> | undefined;
   const watchOptions: CliOptions = {
     ...options,
     force: false,
@@ -273,8 +275,11 @@ async function runWatchMode(options: CliOptions): Promise<never> {
       event: "snapshot",
       iteration: emissionIteration,
       timestamp: new Date().toISOString(),
+      hint: createWatchHint(previousResult, result),
       result
     };
+
+    previousResult = result;
 
     if (options.json) {
       printWatchEventJson(event);

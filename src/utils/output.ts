@@ -167,6 +167,9 @@ export async function printToonResult(
 
 export function printWatchEventHuman(event: WatchEvent): void {
   console.log(`[${event.timestamp}] snapshot #${event.iteration}`);
+  if (event.hint) {
+    console.log(`Hint: ${event.hint}`);
+  }
   printHumanResult(event.result);
 }
 

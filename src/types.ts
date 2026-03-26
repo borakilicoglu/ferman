@@ -56,6 +56,7 @@ export interface WatchEvent {
   event: "snapshot";
   iteration: number;
   timestamp: string;
+  hint?: string;
   result: CommandResult | BatchCommandResult;
 }
 

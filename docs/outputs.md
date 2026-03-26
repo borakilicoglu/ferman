@@ -217,7 +217,7 @@ Example recommendation:
 {
   "recommendation": {
     "action": "terminate",
-    "reason": "A single process is using the port, so targeted termination is a reasonable next step.",
+    "reason": "A single app-style development process is holding the port, so a targeted stop is a reasonable next step.",
     "risk": "low"
   }
 }
@@ -236,11 +236,13 @@ Example diagnosis:
 ```json
 {
   "diagnosis": {
-    "status": "healthy",
-    "message": "All checked ports are free.",
+    "status": "attention",
+    "message": "Some checked ports are busy across app and service workflows: 3000, 5432.",
     "recommendations": [
-      "No action required.",
-      "Run the same doctor check again after starting local services if you want to verify port usage."
+      "Run `ferman --plan --json` on a specific busy port for a safer next-step recommendation.",
+      "Use `ferman <port> --dry` to inspect a busy port without terminating anything.",
+      "Busy app-style ports (3000) look like a leftover local dev loop. Check watcher or restart scripts before forcing a kill.",
+      "Service-style ports (5432) are busy. Confirm whether a local database, cache, or forwarded container port is expected before terminating it."
     ]
   }
 }
@@ -271,14 +273,20 @@ Example watch event:
   "event": "snapshot",
   "iteration": 1,
   "timestamp": "2026-03-24T16:27:59.455Z",
+  "hint": "Ports 3000 became busy again. A watcher, restart script, or container entrypoint may have recreated the listener.",
   "result": {
     "ok": true,
-    "code": "PORT_FREE",
+    "code": "PORT_INSPECTED",
     "port": 3000,
-    "busy": false,
-    "processes": [],
-    "action": "none",
-    "message": "Port is already free."
+    "busy": true,
+    "processes": [
+      {
+        "pid": 1234,
+        "name": "node"
+      }
+    ],
+    "action": "inspected",
+    "message": "Dry mode active. No processes were terminated."
   }
 }
 ```
@@ -290,6 +298,7 @@ ferman 3000 --watch --changed-only --json
 ```
 
 In human-readable mode, watch now prints a short startup banner so it is clear whether it is waiting for changes or emitting regular snapshots.
+When `ferman` detects a useful transition, watch events also include a short `hint` about likely watcher, restart-loop, or container-driven reappearance.
 
 ## Selection Rules
 

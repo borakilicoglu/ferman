@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project follows Semantic Versioning.
 
+## [Unreleased]
+
+### Changed
+
+- Improved `--plan` recommendations for common app and service port scenarios
+- Expanded `--doctor` diagnosis guidance for likely stale dev loops and multi-process listeners
+- Added watch-mode hints for ports that reappear or stay attached to the same process family
+
 ## [0.1.8] - 2026-03-25
 
 ### Added

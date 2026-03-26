@@ -236,12 +236,41 @@ describe("runFerman", () => {
       recommendation: {
         action: "terminate",
         reason:
-          "A single process is using the port, so targeted termination is a reasonable next step.",
+          "A single app-style development process is holding the port, so a targeted stop is a reasonable next step.",
         risk: "low"
       }
     });
     expect(killProcesses).not.toHaveBeenCalled();
     expect(confirmKill).not.toHaveBeenCalled();
+  });
+
+  it("returns a more cautious recommendation for common service ports in plan mode", async () => {
+    const processes: ProcessInfo[] = [{ pid: 4321, name: "postgres" }];
+
+    inspectPort.mockResolvedValue({
+      port: 5432,
+      busy: true,
+      processes
+    });
+
+    const { runFermanBatch } = await import("../src/index");
+    const result = await runFermanBatch(createOptions({ ports: [5432], plan: true, json: true }));
+
+    expect(result).toEqual({
+      ok: true,
+      code: "PORT_INSPECTED",
+      port: 5432,
+      busy: true,
+      processes,
+      action: "inspected",
+      message: "Plan mode active. No processes were terminated.",
+      recommendation: {
+        action: "terminate",
+        reason:
+          "A single process is using a common local service port, so verify it is not expected infrastructure before terminating it.",
+        risk: "low"
+      }
+    });
   });
 
   it("returns diagnosis data in doctor mode", async () => {
@@ -292,10 +321,71 @@ describe("runFerman", () => {
       },
       diagnosis: {
         status: "attention",
-        message: "Some checked ports are busy: 3001.",
+        message: "Some checked ports are busy in an app-style development loop: 3001.",
         recommendations: [
           "Run `ferman --plan --json` on a specific busy port for a safer next-step recommendation.",
-          "Use `ferman <port> --dry` to inspect a busy port without terminating anything."
+          "Use `ferman <port> --dry` to inspect a busy port without terminating anything.",
+          "Busy app-style ports (3001) look like a leftover local dev loop. Check watcher or restart scripts before forcing a kill."
+        ]
+      }
+    });
+  });
+
+  it("adds service and multi-process guidance in doctor mode", async () => {
+    inspectPort
+      .mockResolvedValueOnce({
+        port: 5432,
+        busy: true,
+        processes: [{ pid: 7001, name: "postgres" }]
+      })
+      .mockResolvedValueOnce({
+        port: 5173,
+        busy: true,
+        processes: [{ pid: 7002, name: "node" }, { pid: 7003, name: "vite" }]
+      });
+
+    const { runFermanBatch } = await import("../src/index");
+    const result = await runFermanBatch(createOptions({ ports: [5432, 5173], doctor: true, dry: true, json: true }));
+
+    expect(result).toEqual({
+      ok: true,
+      code: "BATCH_COMPLETED",
+      ports: [
+        {
+          ok: true,
+          code: "PORT_INSPECTED",
+          port: 5432,
+          busy: true,
+          processes: [{ pid: 7001, name: "postgres" }],
+          action: "inspected",
+          message: "Dry mode active. No processes were terminated."
+        },
+        {
+          ok: true,
+          code: "PORT_INSPECTED",
+          port: 5173,
+          busy: true,
+          processes: [{ pid: 7002, name: "node" }, { pid: 7003, name: "vite" }],
+          action: "inspected",
+          message: "Dry mode active. No processes were terminated."
+        }
+      ],
+      summary: {
+        total: 2,
+        busy: 2,
+        free: 0,
+        released: 0,
+        inspected: 2
+      },
+      diagnosis: {
+        status: "attention",
+        message: "Some checked ports are busy across app and service workflows: 5432, 5173.",
+        recommendations: [
+          "Run `ferman --plan --json` on a specific busy port for a safer next-step recommendation.",
+          "Use `ferman <port> --dry` to inspect a busy port without terminating anything.",
+          "Busy app-style ports (5173) look like a leftover local dev loop. Check watcher or restart scripts before forcing a kill.",
+          "Service-style ports (5432) are busy. Confirm whether a local database, cache, or forwarded container port is expected before terminating it.",
+          "Ports with multiple attached processes (5173) need extra inspection because a parent watcher or proxy may respawn them."
         ]
       }
     });
