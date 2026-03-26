@@ -1,6 +1,6 @@
 {
   "name": "ferman",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "A CLI tool to inspect, diagnose, and manage local ports and processes with predictable output for humans and AI agents.",
   "keywords": [
     "cli",
