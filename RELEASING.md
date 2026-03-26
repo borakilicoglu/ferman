@@ -20,6 +20,8 @@ This project uses simple tag-based releases.
 8. Push the branch and tag
 9. Publish with `npm publish --access public` or let GitHub Actions publish from the tag
 
+Use GitHub Releases for release notes. Do not add `RELEASE_NOTES_*.md` files to the repository.
+
 ## Example
 
 ```bash

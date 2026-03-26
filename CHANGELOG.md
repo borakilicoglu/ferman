@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project follows Semantic Versioning.
 
+## [Unreleased]
+
+### Added
+
+- Derived the MCP server version from `package.json` to avoid release-time version drift
+
+### Changed
+
+- Removed legacy `RELEASE_NOTES_*.md` files in favor of `CHANGELOG.md` and GitHub Releases
+
 ## [0.1.9] - 2026-03-26
 
 ### Changed

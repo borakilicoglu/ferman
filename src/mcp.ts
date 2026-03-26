@@ -9,6 +9,7 @@ import type { BatchCommandResult, CliOptions, CommandResult, ErrorResult } from 
 import { COMMON_PORTS } from "./utils/commonPorts";
 import { normalizeError } from "./utils/errors";
 import { getJsonSchema } from "./utils/schema";
+import { getPackageVersion } from "./utils/version";
 
 type BatchOrSingleResult = BatchCommandResult | CommandResult;
 
@@ -102,7 +103,7 @@ function resolvePorts(ports?: number[], common?: boolean): number[] {
 
 const server = new McpServer({
   name: "ferman-mcp",
-  version: "0.1.9"
+  version: getPackageVersion()
 });
 
 server.registerTool(
